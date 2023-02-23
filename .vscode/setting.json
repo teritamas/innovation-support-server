@@ -1,0 +1,25 @@
+{
+  "python.pythonPath": "/Users/$USER/Library/Caches/pypoetry/virtualenvs/inovation-support-server-3rz0RruI-py3.10/bin/python",
+  "[python]": {
+    "editor.defaultFormatter": null,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    }
+  },
+  "python.formatting.provider": "black",
+  "python.linting.enabled": false,
+  "python.linting.lintOnSave": true,
+  "python.linting.flake8Enabled": true,
+  "python.linting.flake8Args": [
+    "--ignore=E203, W503",
+    "--max-complexity=10",
+    "--exclude=models.py",
+    "--max-line-length=120",
+    "--extend-immutable-calls=Depends"
+  ],
+  "python.testing.pytestEnabled": false,
+  "python.linting.pylintEnabled": false,
+  "python.linting.mypyEnabled": false,
+  "python.testing.autoTestDiscoverOnSaveEnabled": false,
+  "python.languageServer": "Pylance"
+}
