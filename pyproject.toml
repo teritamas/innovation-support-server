@@ -9,7 +9,8 @@ packages = [{include = "inovation_support_server"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 fastapi = "^0.92.0"
-uvicorn = {extras = ["standard"], version = "^0.20.0"}
+uvicorn = "^0.20.0"
+web3 = {extras = ["tester"], version = "^5.31.3"}
 
 
 [tool.poetry.group.dev.dependencies]
