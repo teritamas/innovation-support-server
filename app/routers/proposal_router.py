@@ -5,18 +5,23 @@ from app.schemas.proposal.responses import (
     DetailProposalResponse,
     FindProposalResponse,
 )
+from app.services.proposal import entry_proposal_service
 
 
 proposal_router = APIRouter(prefix="/proposal", tags=["proposal"])
 
 
-@proposal_router.post("", description="提案登録API.", response_model=EntryProposalResponse)
+@proposal_router.post(
+    "", description="提案登録API.", response_model=EntryProposalResponse
+)
 def entry_proposal(request: EntryProposalRequest):
-    return EntryProposalResponse()
+    return entry_proposal_service.execute(request)
 
 
 @proposal_router.get(
-    "/{proposal_id}", description="提案詳細取得API.", response_model=DetailProposalResponse
+    "/{proposal_id}",
+    description="提案詳細取得API.",
+    response_model=DetailProposalResponse,
 )
 def detail_proposal(proposal_id: str):
     return DetailProposalResponse()
