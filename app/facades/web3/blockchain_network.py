@@ -1,7 +1,7 @@
 import json
 from web3 import Web3
 
-from app.services.web3.account import ContractOwner
+from app.facades.web3.account import ContractOwner
 
 
 class SmartContract:
@@ -55,13 +55,12 @@ class OZOnlyOwnerMint(SmartContract):
         self,
         contract_owner: ContractOwner,
         contract_address: str,
-        api_json_path: str,
         provider_network_url: str = "https://evm.shibuya.astar.network",
     ) -> None:
         super().__init__(
             contract_owner,
             contract_address,
-            api_json_path,
+            f"./app/assets/abi/{contract_address}.json",
             provider_network_url,
         )
 
