@@ -27,8 +27,6 @@ def detail_proposal(proposal_id: str):
     return DetailProposalResponse()
 
 
-@proposal_router.get(
-    "", description="提案一覧取得API.", response_model=FindProposalResponse
-)
-def find_proposal(tags: str, words: str):
+@proposal_router.get("", description="提案一覧取得API.", response_model=FindProposalResponse)
+def find_proposal(tags: str | None = None, words: str | None = None):
     return FindProposalResponse()

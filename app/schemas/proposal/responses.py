@@ -10,9 +10,9 @@ class EntryProposalResponse(BaseModel):
 
 
 class DetailProposalResponse(BaseModel):
-    proposal: Proposal = Field(..., descriptions="ユーザ情報")
-    proposal_user: User = Field(..., descriptions="ユーザ情報")
+    proposal: Proposal = Field(Proposal(), descriptions="提案内容")
+    proposal_user: User = Field(User(), descriptions="ユーザ情報")
 
 
 class FindProposalResponse(BaseModel):
-    proposals: List[Proposal] = Field(..., descriptions="提案一覧")
+    proposals: List[Proposal] = Field([Proposal()], descriptions="提案内容")
