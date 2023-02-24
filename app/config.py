@@ -7,4 +7,3 @@ load_dotenv(verbose=True)
 env = environ.get("ENV", "prd")
 
 cred_path = environ.get("CRED_PATH", "")
-firebase_database_url = environ.get("FIREBASE_DATABASE_URL", "")
