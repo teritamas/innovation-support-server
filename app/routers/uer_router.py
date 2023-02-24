@@ -7,7 +7,9 @@ from app.schemas.user.response import DetailUserResponse, EntryUserResponse
 user_router = APIRouter(prefix="/user", tags=["user"])
 
 
-@user_router.post("", description="ユーザ登録API.", response_model=EntryUserResponse)
+@user_router.post(
+    "", description="ユーザ登録API.", response_model=EntryUserResponse
+)
 def entry_user(request: EntryUserRequest):
     return EntryUserResponse()
 

@@ -28,7 +28,12 @@ class SmartContract:
         balance = self.contract.functions.balanceOf(
             Web3.toChecksumAddress(self.contract_owner.address)
         ).call()
-        print(f"Name: {token_name}, Symbol: {token_symbol}, 残高: {balance}")
+        print(
+            f"NFT Name: {token_name}, NFT Symbol: {token_symbol}, NFT 残高: {balance}"  # NOQA
+        )
+        print(
+            f"Owner Wallet Address: {contract_owner.address}, 残高: {self.network.eth.get_balance(contract_owner.address)}"  # NOQA
+        )
 
     @staticmethod
     def _load_abi(api_json_path: str):
@@ -54,15 +59,32 @@ class OZOnlyOwnerMint(SmartContract):
         provider_network_url: str = "https://evm.shibuya.astar.network",
     ) -> None:
         super().__init__(
-            contract_owner, contract_address, api_json_path, provider_network_url
+            contract_owner,
+            contract_address,
+            api_json_path,
+            provider_network_url,
         )
 
     def owner(
         self,
     ):
-        print(self.network.eth.getTransactionCount(self.contract_owner.address))
         tx = self.contract.functions.owner().buildTransaction(
-            {"nonce": self.network.eth.getTransactionCount(self.contract_owner.address)}
+            {
+                "nonce": self.network.eth.getTransactionCount(
+                    self.contract_owner.address
+                )
+            }
         )
-        print(type(tx))
+        print(self.execute(tx))
+
+    def name(
+        self,
+    ):
+        tx = self.contract.functions.name().buildTransaction(
+            {
+                "nonce": self.network.eth.getTransactionCount(
+                    self.contract_owner.address
+                )
+            }
+        )
         print(self.execute(tx))

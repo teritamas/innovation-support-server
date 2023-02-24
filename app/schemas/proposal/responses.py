@@ -1,5 +1,5 @@
 from typing import List
-from pydantic import BaseModel, Field, PositiveInt
+from pydantic import BaseModel, Field
 
 from app.schemas.proposal.domain import Proposal
 from ..user.domain import User
