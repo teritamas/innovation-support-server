@@ -1,7 +1,6 @@
 from fastapi import File
 
 from app.facades.firebase import proposals_store, users_store
-from app.facades.gcs.gcs import download_pdf
 from app.schemas.proposal.domain import Proposal
 from app.schemas.proposal.responses import DetailProposalResponse
 from app.schemas.user.domain import User
