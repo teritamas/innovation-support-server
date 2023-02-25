@@ -105,6 +105,7 @@ def test_find_proposal():
 
 
 def test_fetch_proposal():
+    test_entry_proposal()
     # give
     test_proposal_id = "test_proposal_id"
     response = client.get(
