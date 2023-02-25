@@ -1,11 +1,12 @@
 import base64
 import os
-from typing import List
 
 from fastapi import UploadFile
 
-from app.facades.firebase import proposals_store
-from app.facades.gcs import proposal_pdf
+from app import config
+from app.facades.database import proposals_store
+from app.facades.notification import slack
+from app.facades.storage import proposal_pdf
 from app.facades.web3 import proposal_nft
 from app.schemas.proposal.domain import Proposal
 from app.schemas.proposal.requests import EntryProposalRequest
@@ -38,6 +39,13 @@ async def execute(request: EntryProposalRequest, file: UploadFile) -> str:
         proposal.bucket_path = bucket_path
 
         proposals_store.add_proposal(id=proposal_id, content=proposal)
+
+        if request.slack_notification_channels:  # チャンネルが登録されている場合のみ通知をする
+            slack.broadcast(
+                incoming_webhooks_url=config.default_slack_incoming_webhooks_url,
+                channels=request.slack_notification_channels,
+                proposal_view_url=f"{config.frontend_url}propose/{proposal.proposal_id}",
+            )
         return proposal_id
 
     except Exception as e:

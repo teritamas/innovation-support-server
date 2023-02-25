@@ -3,8 +3,8 @@ import os
 
 from fastapi.responses import FileResponse
 
-from app.facades.firebase import proposals_store
-from app.facades.gcs import proposal_pdf
+from app.facades.database import proposals_store
+from app.facades.storage import proposal_pdf
 from app.schemas.proposal.domain import Proposal
 
 
