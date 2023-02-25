@@ -14,8 +14,20 @@ def add_user(id: str, content: User):
         id (str): UserId
         content (User): 追加するユーザ情報
     """
-    doc_ref = fire_store().collection(COLLECTION_PREFIX).document(id)
-    doc_ref.set(content.dict())
+    fire_store.add(collection=COLLECTION_PREFIX, id=id, content=content.dict())
+
+
+def fetch_user(id: str) -> User | None:
+    """idからユーザ情報を検索する。
+
+    Args:
+        id (str): ユーザ情報
+
+    Returns:
+        User | None:
+    """
+    user_dict = fire_store.fetch(collection=COLLECTION_PREFIX, id=id)
+    return User.parse_obj(user_dict) if user_dict else None
 
 
 def fetch_user_from_wallet_address(wallet_address: str) -> List[User]:
@@ -35,16 +47,3 @@ def fetch_user_from_wallet_address(wallet_address: str) -> List[User]:
     )
 
     return [User.parse_obj(user.to_dict()) for user in users]
-
-
-def fetch_user(id: str) -> User | None:
-    """idからユーザ情報を検索する。
-
-    Args:
-        id (str): ユーザ情報
-
-    Returns:
-        User | None:
-    """
-    user = fire_store().collection(COLLECTION_PREFIX).document(id).get()
-    return User.parse_obj(user.to_dict())
