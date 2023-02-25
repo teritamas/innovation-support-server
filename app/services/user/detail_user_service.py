@@ -1,4 +1,4 @@
-from app.facades.firebase import users_store
+from app.facades.database import users_store
 from app.schemas.user.domain import User
 
 

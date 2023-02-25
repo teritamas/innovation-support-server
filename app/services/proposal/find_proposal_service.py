@@ -1,6 +1,6 @@
 from typing import List
 
-from app.facades.firebase import proposals_store
+from app.facades.database import proposals_store
 from app.schemas.proposal.domain import Proposal
 from app.schemas.proposal.responses import FindProposalResponse
 

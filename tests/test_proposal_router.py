@@ -3,8 +3,8 @@ import os
 
 from fastapi.testclient import TestClient
 
-from app.facades.firebase import proposals_store
-from app.facades.gcs import proposal_pdf
+from app.facades.database import proposals_store
+from app.facades.storage import proposal_pdf
 from app.main import app
 from app.schemas.proposal.domain import Proposal
 from app.schemas.proposal.responses import EntryProposalResponse

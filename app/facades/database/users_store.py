@@ -1,8 +1,7 @@
 from typing import List
 
-
+from app.facades.database import fire_store
 from app.schemas.user.domain import User
-from app.facades.firebase import fire_store
 
 COLLECTION_PREFIX = "users"
 

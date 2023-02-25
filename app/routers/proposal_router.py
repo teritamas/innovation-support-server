@@ -4,7 +4,7 @@ from fastapi import APIRouter, Body, File, HTTPException, UploadFile, status
 from fastapi.responses import FileResponse
 from starlette.background import BackgroundTasks
 
-from app.facades.firebase.proposals_store import fetch_proposal
+from app.facades.database.proposals_store import fetch_proposal
 from app.schemas.proposal.requests import EntryProposalRequest
 from app.schemas.proposal.responses import (
     DetailProposalResponse,

@@ -4,8 +4,8 @@ from typing import List
 
 from fastapi import UploadFile
 
-from app.facades.firebase import proposals_store
-from app.facades.gcs import proposal_pdf
+from app.facades.database import proposals_store
+from app.facades.storage import proposal_pdf
 from app.facades.web3 import proposal_nft
 from app.schemas.proposal.domain import Proposal
 from app.schemas.proposal.requests import EntryProposalRequest
