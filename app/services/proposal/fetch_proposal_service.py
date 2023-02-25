@@ -14,4 +14,4 @@ def execute(proposal_id: str) -> tuple[Proposal, User] | None:
     if user is None:  # IDに紐づくユーザが存在しなければNoneを返す
         print(f"user is None. proposal {proposal}")
         return None
-    return tuple[proposal, user]
+    return (proposal, user[0])

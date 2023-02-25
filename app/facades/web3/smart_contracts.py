@@ -1,11 +1,13 @@
 import json
+from lib2to3.pytree import Base
+
 from web3 import Web3
 
 from app.facades.web3.account import ContractOwner
 
 
-class SmartContract:
-    """スマートコントラクトのクラス。ネットワークやアカウントを意識しないで利用可能。"""
+class BaseContract:
+    """スマートコントラクトの基底クラス。ネットワークやアカウントを意識しないで利用可能。"""
 
     def __init__(
         self,
@@ -50,13 +52,74 @@ class SmartContract:
         return self.network.eth.waitForTransactionReceipt(tx_hash)
 
 
-class OZOnlyOwnerMint(SmartContract):
+class ProposalNFT(BaseContract):
+    """提案NFTのコントラクト"""
+
     def __init__(
         self,
         contract_owner: ContractOwner,
         contract_address: str,
         provider_network_url: str = "https://evm.shibuya.astar.network",
+        mock_mode: bool = False,
     ) -> None:
+        if mock_mode:  # MockModeの時は初期化しない
+            return
+
+        super().__init__(
+            contract_owner,
+            contract_address,
+            f"./app/assets/abi/{contract_address}.json",
+            provider_network_url,
+        )
+
+    def mint(self, proposer_address: str, identifier: str) -> str:
+        """提案NFTを発行し提案者のウォレットにNFTを紐づける
+
+        Args:
+            proposer_address (str): 提案者のウォレットアドレス
+            identifier (str): 識別子
+        """
+        # TODO: mintするコントラクトの作成
+        print(f"mint proposal nft. {proposer_address=}, {identifier=}")
+        return "dummy_nft_id"
+
+    def vote(self, target_nft_id: str, voter_address: str, token_amount: int):
+        """提案に対して投票をし、その見返りに投票者にトークンを発行する。
+
+        Args:
+            target_nft_id (str): 投票するNFTのId
+            voter_address (str): 投票者のウォレットアドレス
+            token_amount (int): 発行するトークン量
+        """
+        # TODO: 提案に対して投票を行い、投票者にトークンを発行するコントラクトの作成
+        print(
+            f"vote proposal nft. {target_nft_id=}, {voter_address=}, {token_amount=}"
+        )
+
+    def burn(self, wallet_address: str, burn_token_amount: int):
+        """トークンを消費する。トークンを消費して、福利厚生や研修プロジェクトを受けるユースケースまで実装する場合に実装する。
+
+        Args:
+            wallet_address (str): _description_
+            burn_token_amount (int): _description_
+        """
+        # TODO: トークンを焼却する
+        print(f"burn token. {wallet_address=}, {burn_token_amount=}")
+
+
+class OZOnlyOwnerMint(BaseContract):
+    """FIXME: サンプル用途. 将来的に削除する."""
+
+    def __init__(
+        self,
+        contract_owner: ContractOwner,
+        contract_address: str,
+        provider_network_url: str = "https://evm.shibuya.astar.network",
+        mock_mode: bool = False,
+    ) -> None:
+        if mock_mode:  # MockModeの時は初期化しない
+            return
+
         super().__init__(
             contract_owner,
             contract_address,

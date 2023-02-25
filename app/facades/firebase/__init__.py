@@ -31,6 +31,9 @@ class FireStore:
         doc = self._db.collection(collection).document(id).get()
         return doc.to_dict()
 
+    def delete(self, collection: str, id: str):
+        self._db.collection(collection).document(id).delete()
+
 
 fire_store = FireStore(
     config.cred_path,
