@@ -1,4 +1,5 @@
 from app.facades.firebase import proposals_store, users_store
+from app.facades.web3 import proposal_nft
 from app.schemas.proposal_vote.requests import EntryProposalVoteRequest
 from app.schemas.proposal_vote.responses import EntryProposalVoteResponse
 
@@ -14,6 +15,11 @@ def execute(proposal_id: str, request: EntryProposalVoteRequest):
     vote_user_wallet_address = user.wallet_address
 
     # TODO: 投票内容の評価でトークンの発行量を決める
-    # TODO: ここでコントラクトの投票処理
+    # コントラクトの投票処理
+    proposal_nft.vote(
+        target_nft_id=proposal.nft_token_id,
+        voter_address=vote_user_wallet_address,
+        token_amount=10,
+    )
 
     return "temp_nft_id"

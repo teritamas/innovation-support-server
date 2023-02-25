@@ -1,0 +1,77 @@
+import json
+import os
+
+from fastapi.testclient import TestClient
+
+from app.facades.firebase import proposals_store
+from app.facades.gcs import proposal_pdf
+from app.main import app
+from app.schemas.proposal.domain import Proposal
+from app.schemas.proposal.responses import EntryProposalResponse
+from app.schemas.user.domain import User
+
+client = TestClient(app)
+
+
+def test_entry_proposal(mocker):
+    test_proposal_id = "test_proposal_id"
+    test_wallet_address = "0xAbcdefg"
+    test_file_name = "sample.pdf"
+    mocker.patch(
+        "app.services.proposal.entry_proposal_service.generate_id_str",
+        return_value=test_proposal_id,
+    )
+    proposals_store.delete_proposal(test_proposal_id)
+    proposal_pdf.delete(
+        os.path.join(test_wallet_address, test_proposal_id, test_file_name)
+    )
+
+    request = {
+        "title": "pytestの実行サンプル",
+        "descriptions": "テストで挿入されたデータです",
+        "target_amount": 1000,
+        "is_recruiting_teammates": False,
+        "other_contents": "その他コメント",
+        "tags": [],
+        "proposer_wallet_address": test_wallet_address,
+    }
+    request_json = json.dumps(request)
+    response = client.post(
+        "/proposal",
+        files={
+            "request": (
+                None,
+                request_json,
+            ),
+            "file": open(f"./tests/assets/{test_file_name}", "rb"),
+        },
+    )
+    assert response.status_code == 200
+    actual = EntryProposalResponse.parse_obj(response.json())
+    assert actual.proposal_id == test_proposal_id
+
+
+def test_find_proposal():
+    # give
+    response = client.get(
+        "/proposal",
+    )
+
+    assert response.status_code == 200
+    actual = response.json()
+    assert type(actual) == dict
+    assert type(actual.get("proposals")) == list
+
+
+def test_fetch_proposal():
+    # give
+    test_proposal_id = "test_proposal_id"
+    response = client.get(
+        f"/proposal/{test_proposal_id}",
+    )
+
+    assert response.status_code == 200
+    actual_proposal = Proposal.parse_obj(response.json().get("proposal"))
+    assert actual_proposal.proposal_id == test_proposal_id
+    actual_user = User.parse_obj(response.json().get("proposal_user"))
+    assert actual_user.user_id == "test_uuid"

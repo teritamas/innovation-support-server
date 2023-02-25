@@ -31,3 +31,7 @@ def find_proposals() -> List[Proposal]:
     """提案内容を全て検索する"""
     proposals = fire_store().collection(COLLECTION_PREFIX).stream()
     return [Proposal.parse_obj(proposal.to_dict()) for proposal in proposals]
+
+
+def delete_proposal(id: str):
+    fire_store.delete(collection=COLLECTION_PREFIX, id=id)

@@ -6,6 +6,7 @@ from fastapi import UploadFile
 
 from app.facades.firebase import proposals_store
 from app.facades.gcs import proposal_pdf
+from app.facades.web3 import proposal_nft
 from app.schemas.proposal.domain import Proposal
 from app.schemas.proposal.requests import EntryProposalRequest
 from app.utils.common import generate_id_str
@@ -26,10 +27,14 @@ async def execute(request: EntryProposalRequest, file: UploadFile) -> str:
         )
 
         # TODO:  ここでコントラクトの書き込み処理
+        nft_token_id = proposal_nft.mint(
+            request.proposer_wallet_address, identifier=bucket_path
+        )
 
         # FireStoreに保存するフォーマットに変換
         proposal = Proposal.parse_obj(request.dict())
         proposal.proposal_id = proposal_id
+        proposal.nft_token_id = nft_token_id
         proposal.bucket_path = bucket_path
 
         proposals_store.add_proposal(id=proposal_id, content=proposal)
