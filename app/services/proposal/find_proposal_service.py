@@ -7,6 +7,6 @@ from app.schemas.proposal.responses import FindProposalResponse
 
 def execute(
     tags: str | None = None, words: str | None = None
-) -> FindProposalResponse | None:
+) -> List[Proposal] | None:
     proposals: List[Proposal] = proposals_store.find_proposals()
-    return FindProposalResponse(proposals=proposals)
+    return proposals

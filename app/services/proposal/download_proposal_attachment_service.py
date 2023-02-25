@@ -4,7 +4,7 @@ import os
 from fastapi.responses import FileResponse
 
 from app.facades.firebase import proposals_store
-from app.facades.gcs.gcs import download_pdf
+from app.facades.gcs import proposal_pdf
 from app.schemas.proposal.domain import Proposal
 
 
@@ -15,8 +15,8 @@ def execute(proposal_id: str, bucket_path: str) -> str:
         print("proposal is None")
         return None
 
-    download_pdf_byte = download_pdf(proposal.bucket_path)
+    download_byte = proposal_pdf.download(proposal.bucket_path)
     with open(os.path.basename(proposal.bucket_path), "wb") as f:
-        f.write(base64.b64decode(download_pdf_byte))
+        f.write(base64.b64decode(download_byte))
 
     return os.path.basename(proposal.bucket_path)

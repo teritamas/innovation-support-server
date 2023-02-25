@@ -2,6 +2,10 @@
   "python.testing.pytestArgs": [
     "tests"
   ],
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+  },
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
   "python.pythonPath": "/Users/$USER/Library/Caches/pypoetry/virtualenvs/inovation-support-server-3rz0RruI-py3.10/bin/python",
