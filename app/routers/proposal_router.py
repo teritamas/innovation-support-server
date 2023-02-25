@@ -1,6 +1,6 @@
 import os
 
-from fastapi import APIRouter, Body, File, HTTPException, UploadFile
+from fastapi import APIRouter, Body, File, HTTPException, UploadFile, status
 from fastapi.responses import FileResponse
 from starlette.background import BackgroundTasks
 
@@ -49,7 +49,7 @@ def detail_proposal(proposal_id: str):
             proposal_user=user,
         )
     else:
-        return HTTPException(status_code=404, detail="Not Found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
 
 @proposal_router.get(
@@ -71,7 +71,7 @@ def download_proposal_attachment(
             media_type="application/pdf",
         )
     else:
-        return HTTPException(status_code=404, detail="Not Found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
 
 @proposal_router.get(
