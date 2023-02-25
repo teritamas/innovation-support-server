@@ -42,9 +42,12 @@ async def entry_proposal(
     response_model=DetailProposalResponse,
 )
 def detail_proposal(proposal_id: str):
-    response = fetch_proposal_service.execute(proposal_id=proposal_id)
-    if response:
-        return response
+    proposal, user = fetch_proposal_service.execute(proposal_id=proposal_id)
+    if proposal and user:
+        return DetailProposalResponse(
+            proposal=proposal,
+            proposal_user=user,
+        )
     else:
         return HTTPException(status_code=404, detail="Not Found")
 
@@ -76,4 +79,5 @@ def download_proposal_attachment(
 )
 def find_proposal(tags: str | None = None, words: str | None = None):
     # TODO: タグで絞り込みは未実施
-    return find_proposal_service.execute(tags, words)
+    proposals = find_proposal_service.execute(tags, words)
+    return FindProposalResponse(proposals=proposals)
