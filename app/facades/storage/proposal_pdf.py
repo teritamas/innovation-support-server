@@ -1,4 +1,4 @@
-from app.facades.gcs import gcs
+from app.facades.storage import gcs
 
 
 def upload(data: bytes, destination_blob_name: str) -> str:

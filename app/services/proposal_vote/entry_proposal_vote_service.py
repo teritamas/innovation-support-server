@@ -1,4 +1,4 @@
-from app.facades.firebase import proposals_store, users_store
+from app.facades.database import proposals_store, users_store
 from app.facades.web3 import proposal_nft
 from app.schemas.proposal_vote.requests import EntryProposalVoteRequest
 from app.schemas.proposal_vote.responses import EntryProposalVoteResponse

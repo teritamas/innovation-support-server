@@ -107,7 +107,7 @@ class ProposalNFT(BaseContract):
         print(f"burn token. {wallet_address=}, {burn_token_amount=}")
 
 
-class OZOnlyOwnerMint(BaseContract):
+class SampleNFT(BaseContract):
     """FIXME: サンプル用途. 将来的に削除する."""
 
     def __init__(

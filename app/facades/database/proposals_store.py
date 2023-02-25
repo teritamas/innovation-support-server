@@ -1,6 +1,6 @@
 from typing import List
 
-from app.facades.firebase import fire_store
+from app.facades.database import fire_store
 from app.schemas.proposal.domain import Proposal
 
 COLLECTION_PREFIX = "proposals"
