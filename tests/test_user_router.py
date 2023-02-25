@@ -27,6 +27,7 @@ def test_entry_user(mocker):
 
 
 def test_fetch_user(mocker):
+    test_entry_user(mocker)
     # give
     test_user_id = "test_uuid"
 
@@ -41,3 +42,22 @@ def test_fetch_user(mocker):
     assert actual_user.user_name == "test_user"
     assert actual_user.message == ""
     assert actual_user.wallet_address == "0xAbcdefg"
+
+
+def test_fetch_user_by_wallet_address(mocker):
+    # test_entry_user(mocker)
+    # give
+    test_user_id = "test_uuid"
+    test_wallet_address = "0xAbcdefg"
+
+    response = client.get(
+        f"/user/wallet_address/{test_wallet_address}",
+    )
+
+    assert response.status_code == 200
+    actual_user = User.parse_obj(response.json())
+    assert actual_user.user_id == test_user_id
+    assert actual_user.total_token_amount == 0
+    assert actual_user.user_name == "test_user"
+    assert actual_user.message == ""
+    assert actual_user.wallet_address == test_wallet_address
