@@ -104,8 +104,8 @@ def test_find_proposal():
     assert type(actual.get("proposals")) == list
 
 
-def test_fetch_proposal():
-    test_entry_proposal()
+def test_fetch_proposal(mocker):
+    test_entry_proposal(mocker)
     # give
     test_proposal_id = "test_proposal_id"
     response = client.get(
