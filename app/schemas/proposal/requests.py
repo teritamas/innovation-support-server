@@ -1,6 +1,6 @@
 import json
 from typing import List
-from fastapi import UploadFile
+
 from pydantic import BaseModel, Field, PositiveInt
 
 
@@ -16,6 +16,10 @@ class EntryProposalRequest(BaseModel):
     other_contents: str = Field("その他コメント", max_length=8192, description="捕捉情報")
     tags: List[str] = Field([], description="キーワード")
     proposer_wallet_address: str = Field(..., description="")
+
+    slack_notification_channels: List[str] | None = Field(
+        None, description="提案の投稿を通知するチャンネル"
+    )
 
     @classmethod
     def __get_validators__(cls):
