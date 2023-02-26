@@ -20,9 +20,14 @@ def test_entry_proposal(mocker):
     test_proposal_id = "test_proposal_id"
     test_user_id = "test_uuid"
     test_file_name = "sample.pdf"
+    test_token_id = 1
     mocker.patch(
         "app.services.proposal.entry_proposal_service.generate_id_str",
         return_value=test_proposal_id,
+    )
+    mocker.patch(
+        "app.services.proposal.entry_proposal_service.proposal_nft.mint",
+        return_value=test_token_id,
     )
     proposals_store.delete_proposal(test_proposal_id)
     proposal_pdf.delete(
@@ -57,7 +62,7 @@ def test_entry_proposal(mocker):
 @pytest.mark.skipif(True, reason="実際にSlackに通知が飛ぶため、基本的にスキップ")
 def test_entry_proposal_slack_notification(mocker):
     test_proposal_id = "test_proposal_id"
-    test_wallet_address = "0xAbcdefg"
+    test_wallet_address = "0x7FF84a54d3d7070391Dd9808696Fc547a910af91"
     test_file_name = "sample.pdf"
     mocker.patch(
         "app.services.proposal.entry_proposal_service.generate_id_str",
