@@ -3,6 +3,8 @@ from typing import List
 
 import requests
 
+from app.utils.logging import logger
+
 
 def broadcast(
     incoming_webhooks_url: str,
@@ -24,4 +26,4 @@ def broadcast(
             incoming_webhooks_url,
             data=data,
         )
-        print(f"notification result. {channel=}, {response=}")
+        logger.info(f"notification result. {channel=}, {response=}")

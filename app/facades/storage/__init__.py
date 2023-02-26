@@ -1,7 +1,10 @@
 from typing import Any
+
 from google.cloud import storage
-import app.config as config
 from google.cloud.storage.bucket import Bucket
+
+import app.config as config
+from app.utils.logging import logger
 
 
 class GoogleCloudStorage:
@@ -10,7 +13,7 @@ class GoogleCloudStorage:
         self._bucket = _storage_client.bucket(
             config.google_cloud_storage_bucket_name
         )
-        print(
+        logger.info(
             f"Google Cloud Storage Initialize Complete!. bucket name: {self._bucket.name}"
         )
 
