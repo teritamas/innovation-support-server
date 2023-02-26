@@ -8,4 +8,4 @@ def execute(wallet_address: str) -> User | None:
     # TODO: ここでネットワークからウォレットの情報を取得する。
     # wallet_address = user.wallet_address
 
-    return users[0] if len(users) == 1 else None
+    return users[0] if len(users) != 0 else None
