@@ -1,5 +1,4 @@
 import json
-from lib2to3.pytree import Base
 
 from web3 import Web3
 
@@ -49,7 +48,20 @@ class BaseContract:
         # トランザクションの送信
         tx_hash = self.network.eth.sendRawTransaction(signed_tx.rawTransaction)
 
-        return self.network.eth.waitForTransactionReceipt(tx_hash)
+        return self.network.eth.wait_for_transaction_receipt(tx_hash)
+
+    def owner(
+        self,
+    ):
+        return self.contract.functions.owner().call()
+
+    def name(
+        self,
+    ):
+        return self.contract.functions.name().call()
+
+    def fetchTokenInfoByTokeId(self, tokenId: int):
+        return self.contract.functions.tokenURI(tokenId).call()
 
 
 class ProposalNFT(BaseContract):
@@ -72,16 +84,34 @@ class ProposalNFT(BaseContract):
             provider_network_url,
         )
 
-    def mint(self, proposer_address: str, identifier: str) -> str:
+        # 所有者でないと実行できない為
+        # if self.owner() == self.contract_owner:
+        #     RuntimeError
+
+    def getTokenIdByTransactionLog(self, logs) -> int:
+        """トランザクションログからTokenIdを検索する. TODO: 改善の必要あり"""
+        tokenId = int(logs[-1]["topics"][-1].hex().replace("0x", ""), base=16)
+        return tokenId
+
+    async def mint(self, proposer_address: str, identifier: str) -> str:
         """提案NFTを発行し提案者のウォレットにNFTを紐づける
 
         Args:
             proposer_address (str): 提案者のウォレットアドレス
             identifier (str): 識別子
         """
-        # TODO: mintするコントラクトの作成
-        print(f"mint proposal nft. {proposer_address=}, {identifier=}")
-        return "dummy_nft_id"
+        tx = self.contract.functions.nftMint(
+            proposer_address, identifier
+        ).buildTransaction(
+            {
+                "nonce": self.network.eth.getTransactionCount(
+                    self.contract_owner.address
+                )
+            }
+        )
+        tx_result = self.execute(tx)
+        tokenId = self.getTokenIdByTransactionLog(tx_result["logs"])
+        return tokenId
 
     def vote(self, target_nft_id: str, voter_address: str, token_amount: int):
         """提案に対して投票をし、その見返りに投票者にトークンを発行する。
@@ -126,27 +156,3 @@ class SampleNFT(BaseContract):
             f"./app/assets/abi/{contract_address}.json",
             provider_network_url,
         )
-
-    def owner(
-        self,
-    ):
-        tx = self.contract.functions.owner().buildTransaction(
-            {
-                "nonce": self.network.eth.getTransactionCount(
-                    self.contract_owner.address
-                )
-            }
-        )
-        print(self.execute(tx))
-
-    def name(
-        self,
-    ):
-        tx = self.contract.functions.name().buildTransaction(
-            {
-                "nonce": self.network.eth.getTransactionCount(
-                    self.contract_owner.address
-                )
-            }
-        )
-        print(self.execute(tx))
