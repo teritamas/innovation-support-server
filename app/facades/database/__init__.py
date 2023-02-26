@@ -5,6 +5,7 @@ from firebase_admin import credentials, firestore
 from pydantic import BaseModel
 
 from app import config
+from app.utils.logging import logger
 
 
 class FireStore:
@@ -16,7 +17,7 @@ class FireStore:
 
         firebase_admin.initialize_app(cred)
         self._db = firestore.client()
-        print("Fire Store: Initialize Complete!")
+        logger.info("Fire Store: Initialize Complete!")
 
     def __call__(
         self,
