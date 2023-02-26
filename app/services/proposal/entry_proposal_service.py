@@ -25,7 +25,7 @@ async def execute(request: EntryProposalRequest, file: UploadFile) -> str:
         bucket_path = await upload_file(request, file, proposal_id)
 
         # TODO:  ここでコントラクトの書き込み処理
-        nft_token_id = proposal_nft.mint(
+        nft_token_id = await proposal_nft.mint(
             proposal_user.wallet_address, identifier=bucket_path
         )
 
