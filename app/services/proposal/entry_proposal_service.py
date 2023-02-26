@@ -1,5 +1,4 @@
 import base64
-import os
 
 from fastapi import UploadFile
 
@@ -10,7 +9,7 @@ from app.facades.storage import proposal_pdf
 from app.facades.web3 import proposal_nft
 from app.schemas.proposal.domain import Proposal
 from app.schemas.proposal.requests import EntryProposalRequest
-from app.utils.common import generate_id_str
+from app.utils.common import build_nft_uri, generate_id_str
 
 
 async def execute(request: EntryProposalRequest, file: UploadFile) -> str:
@@ -22,18 +21,19 @@ async def execute(request: EntryProposalRequest, file: UploadFile) -> str:
 
         proposal_id = generate_id_str()
 
-        bucket_path = await upload_file(request, file, proposal_id)
+        nft_uri = await _upload_file(request, file, proposal_id)
 
         # TODO:  ここでコントラクトの書き込み処理
         nft_token_id = await proposal_nft.mint(
-            proposal_user.wallet_address, identifier=bucket_path
+            proposal_user.wallet_address, identifier=nft_uri
         )
 
         # FireStoreに保存するフォーマットに変換
         proposal = Proposal.parse_obj(request.dict())
         proposal.proposal_id = proposal_id
         proposal.nft_token_id = nft_token_id
-        proposal.bucket_path = bucket_path
+        proposal.nft_uri = nft_uri
+        proposal.file_original_name = file.filename
 
         proposals_store.add_proposal(id=proposal_id, content=proposal)
 
@@ -49,14 +49,19 @@ async def execute(request: EntryProposalRequest, file: UploadFile) -> str:
         print("error", e)
 
 
-async def upload_file(request, file, proposal_id):
+async def _upload_file(request, file, proposal_id) -> str:
+    """ファイルをGoogle Cloud Storageにアップロードする"""
     data = await file.read()  # アップロードされた画像をbytesに変換する処理
     bin_data: bytes = base64.b64encode(data).decode()
 
-    bucket_path = os.path.join(request.user_id, proposal_id, file.filename)
+    nft_uri = build_nft_uri(
+        request.user_id,
+        proposal_id,
+        file.filename,
+    )
     proposal_pdf.upload(
         data=bin_data,
-        destination_blob_name=bucket_path,
+        destination_blob_name=nft_uri,
     )
 
-    return bucket_path
+    return nft_uri

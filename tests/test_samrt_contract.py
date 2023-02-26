@@ -36,6 +36,7 @@ def test_sample_contract_function():
     assert sample.owner() != ""
 
 
+@pytest.mark.skipif(True, reason="実際にMintを実行するため時間がかかり、かつテストコインを消費するため")
 @pytest.mark.asyncio
 async def test_proposal_contract_function():
     """ネットワークに接続しサンプルのコントラクトを実行できること"""
