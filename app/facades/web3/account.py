@@ -1,6 +1,9 @@
 import os
-from eth_account import Account
 import secrets
+
+from eth_account import Account
+
+from app.utils.logging import logger
 
 
 class ContractOwner:
@@ -10,7 +13,7 @@ class ContractOwner:
         self.private_key = self._load_private_key(private_key_filename)
         _account = Account.from_key(self.private_key)
         self.address = _account.address
-        print(f"Address: {self.address}")
+        logger.info(f"Wallet Address: {self.address}")
 
     @staticmethod
     def _load_private_key(filename: str):
@@ -26,6 +29,7 @@ class ContractOwner:
             with open(filename, "r") as fpr:
                 private_key = fpr.read()
         else:
+            logger.info(f"private key is not exists. create key. : {filename}")
             private_key = "0x" + secrets.token_hex(32)
 
             with open(filename, "w") as fpr:

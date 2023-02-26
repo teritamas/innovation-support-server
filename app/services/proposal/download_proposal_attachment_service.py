@@ -6,12 +6,13 @@ from fastapi.responses import FileResponse
 from app.facades.database import proposals_store
 from app.facades.storage import proposal_pdf
 from app.schemas.proposal.domain import Proposal
+from app.utils.logging import logger
 
 
 def execute(proposal_id: str) -> str:
     proposal: Proposal = proposals_store.fetch_proposal(proposal_id)
     if proposal is None:  # IDに紐づく提案が存在しなければNoneを返す
-        print("proposal is None")
+        logger.warn(f"proposal is None. {proposal_id=}")
         return None
 
     download_byte = proposal_pdf.download(proposal.nft_uri)

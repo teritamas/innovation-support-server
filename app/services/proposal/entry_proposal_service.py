@@ -10,13 +10,14 @@ from app.facades.web3 import proposal_nft
 from app.schemas.proposal.domain import Proposal
 from app.schemas.proposal.requests import EntryProposalRequest
 from app.utils.common import build_nft_uri, generate_id_str
+from app.utils.logging import logger
 
 
 async def execute(request: EntryProposalRequest, file: UploadFile) -> str:
     try:
         proposal_user = users_store.fetch_user(request.user_id)
         if proposal_user is None:
-            print(f"ユーザが存在しません: {request.user_id}")
+            logger.info(f"user is none. {request.user_id=}")
             return None
 
         proposal_id = generate_id_str()
@@ -38,6 +39,9 @@ async def execute(request: EntryProposalRequest, file: UploadFile) -> str:
         proposals_store.add_proposal(id=proposal_id, content=proposal)
 
         if request.slack_notification_channels:  # チャンネルが登録されている場合のみ通知をする
+            logger.info(
+                f"slack channel. {request.slack_notification_channels=}"
+            )
             slack.broadcast(
                 incoming_webhooks_url=config.default_slack_incoming_webhooks_url,
                 channels=request.slack_notification_channels,
@@ -46,7 +50,7 @@ async def execute(request: EntryProposalRequest, file: UploadFile) -> str:
         return proposal_id
 
     except Exception as e:
-        print("error", e)
+        logger.info("error", e)
 
 
 async def _upload_file(request, file, proposal_id) -> str:

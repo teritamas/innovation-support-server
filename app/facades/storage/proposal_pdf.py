@@ -1,4 +1,5 @@
 from app.facades.storage import gcs
+from app.utils.logging import logger
 
 
 def upload(data: bytes, destination_blob_name: str) -> str:
@@ -11,7 +12,7 @@ def upload(data: bytes, destination_blob_name: str) -> str:
         if_generation_match=generation_match_precondition,
     )
 
-    print(f"File uploaded to {destination_blob_name}.")
+    logger.info(f"File uploaded to {destination_blob_name}.")
 
 
 def download(destination_blob_name: str) -> bytes:

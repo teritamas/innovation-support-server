@@ -3,6 +3,7 @@ import json
 from web3 import Web3
 
 from app.facades.web3.account import ContractOwner
+from app.utils.logging import logger
 
 
 class BaseContract:
@@ -18,7 +19,9 @@ class BaseContract:
         self.contract_owner = contract_owner
         self.network = Web3(Web3.HTTPProvider(provider_network_url))
         if self.network.isConnected():
-            print(f"Connect Complete !!. network: {provider_network_url}")
+            logger.info(
+                f"Connect Complete !!. network: {provider_network_url}"
+            )
 
         self.contract = self.network.eth.contract(
             address=contract_address, abi=self._load_abi(api_json_path)
@@ -29,10 +32,10 @@ class BaseContract:
         balance = self.contract.functions.balanceOf(
             Web3.toChecksumAddress(self.contract_owner.address)
         ).call()
-        print(
+        logger.info(
             f"NFT Name: {token_name}, NFT Symbol: {token_symbol}, NFT 残高: {balance}"  # NOQA
         )
-        print(
+        logger.info(
             f"Owner Wallet Address: {contract_owner.address}, 残高: {self.network.eth.get_balance(contract_owner.address)}"  # NOQA
         )
 
@@ -122,7 +125,7 @@ class ProposalNFT(BaseContract):
             token_amount (int): 発行するトークン量
         """
         # TODO: 提案に対して投票を行い、投票者にトークンを発行するコントラクトの作成
-        print(
+        logger.info(
             f"vote proposal nft. {target_nft_id=}, {voter_address=}, {token_amount=}"
         )
 
@@ -134,7 +137,7 @@ class ProposalNFT(BaseContract):
             burn_token_amount (int): _description_
         """
         # TODO: トークンを焼却する
-        print(f"burn token. {wallet_address=}, {burn_token_amount=}")
+        logger.info(f"burn token. {wallet_address=}, {burn_token_amount=}")
 
 
 class SampleNFT(BaseContract):
