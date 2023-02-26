@@ -53,16 +53,16 @@ def detail_proposal(proposal_id: str):
 
 
 @proposal_router.get(
-    "/{proposal_id}/attachment/{bucket_path}",
+    "/{proposal_id}/attachment",
     description="提案詳細PDF取得API.",
     response_class=FileResponse,
     response_description="提案に紐づくPDFファイル",
 )
 def download_proposal_attachment(
-    proposal_id: str, bucket_path: str, background_tasks: BackgroundTasks
+    proposal_id: str, background_tasks: BackgroundTasks
 ):
     response = download_proposal_attachment_service.execute(
-        proposal_id=proposal_id, bucket_path=bucket_path
+        proposal_id=proposal_id
     )
     if response:
         background_tasks.add_task(remove_file, response)  # 実行後ファイルを削除

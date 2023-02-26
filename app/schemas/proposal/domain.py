@@ -13,10 +13,10 @@ class Proposal(BaseModel):
     descriptions: str = Field(
         "提案の概要サンプル", max_length=8192, description="idea description."
     )
-    bucket_path: str = Field(
-        "path/to/proposal.pdf",
+    file_original_name: str = Field(
+        "proposal.pdf",
         max_length=8192,
-        description="提案を詳細に説明するファイルのパス",
+        description="アップロードされたファイルの元々のファイル名。",
     )
     target_amount: PositiveInt = Field(1000, description="目標金額")
     is_recruiting_teammates: bool = Field(
@@ -27,4 +27,5 @@ class Proposal(BaseModel):
     user_id: str = Field("提案者のユーザID", description="")
 
     # コントラクトに関する設定
-    nft_token_id: str = Field("提案NFTのID", description="提案NFTのID")
+    nft_uri: str = Field("", description="提案NFTのURI")
+    nft_token_id: str = Field("", description="提案NFTのトークンID")

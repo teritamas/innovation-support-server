@@ -10,6 +10,7 @@ from app.main import app
 from app.schemas.proposal.domain import Proposal
 from app.schemas.proposal.responses import EntryProposalResponse
 from app.schemas.user.domain import User
+from app.utils.common import build_nft_uri
 from tests.test_user_router import test_entry_user
 
 client = TestClient(app)
@@ -31,7 +32,11 @@ def test_entry_proposal(mocker):
     )
     proposals_store.delete_proposal(test_proposal_id)
     proposal_pdf.delete(
-        os.path.join(test_user_id, test_proposal_id, test_file_name)
+        build_nft_uri(
+            user_id=test_user_id,
+            proposal_id=test_proposal_id,
+            filename=test_file_name,
+        )
     )
 
     request = {
