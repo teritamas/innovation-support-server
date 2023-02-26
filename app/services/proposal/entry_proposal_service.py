@@ -4,7 +4,7 @@ import os
 from fastapi import UploadFile
 
 from app import config
-from app.facades.database import proposals_store
+from app.facades.database import proposals_store, users_store
 from app.facades.notification import slack
 from app.facades.storage import proposal_pdf
 from app.facades.web3 import proposal_nft
@@ -15,21 +15,18 @@ from app.utils.common import generate_id_str
 
 async def execute(request: EntryProposalRequest, file: UploadFile) -> str:
     try:
-        data = await file.read()  # アップロードされた画像をbytesに変換する処理
-        bin_data: bytes = base64.b64encode(data).decode()
+        proposal_user = users_store.fetch_user(request.user_id)
+        if proposal_user is None:
+            print(f"ユーザが存在しません: {request.user_id}")
+            return None
 
         proposal_id = generate_id_str()
-        bucket_path = os.path.join(
-            request.proposer_wallet_address, proposal_id, file.filename
-        )
-        proposal_pdf.upload(
-            data=bin_data,
-            destination_blob_name=bucket_path,
-        )
+
+        bucket_path = await upload_file(request, file, proposal_id)
 
         # TODO:  ここでコントラクトの書き込み処理
         nft_token_id = proposal_nft.mint(
-            request.proposer_wallet_address, identifier=bucket_path
+            proposal_user.wallet_address, identifier=bucket_path
         )
 
         # FireStoreに保存するフォーマットに変換
@@ -50,3 +47,16 @@ async def execute(request: EntryProposalRequest, file: UploadFile) -> str:
 
     except Exception as e:
         print("error", e)
+
+
+async def upload_file(request, file, proposal_id):
+    data = await file.read()  # アップロードされた画像をbytesに変換する処理
+    bin_data: bytes = base64.b64encode(data).decode()
+
+    bucket_path = os.path.join(request.user_id, proposal_id, file.filename)
+    proposal_pdf.upload(
+        data=bin_data,
+        destination_blob_name=bucket_path,
+    )
+
+    return bucket_path

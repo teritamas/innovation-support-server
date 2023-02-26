@@ -10,13 +10,15 @@ from app.main import app
 from app.schemas.proposal.domain import Proposal
 from app.schemas.proposal.responses import EntryProposalResponse
 from app.schemas.user.domain import User
+from tests.test_user_router import test_entry_user
 
 client = TestClient(app)
 
 
 def test_entry_proposal(mocker):
+    test_entry_user(mocker=mocker)
     test_proposal_id = "test_proposal_id"
-    test_wallet_address = "0xAbcdefg"
+    test_user_id = "test_uuid"
     test_file_name = "sample.pdf"
     mocker.patch(
         "app.services.proposal.entry_proposal_service.generate_id_str",
@@ -24,7 +26,7 @@ def test_entry_proposal(mocker):
     )
     proposals_store.delete_proposal(test_proposal_id)
     proposal_pdf.delete(
-        os.path.join(test_wallet_address, test_proposal_id, test_file_name)
+        os.path.join(test_user_id, test_proposal_id, test_file_name)
     )
 
     request = {
@@ -34,7 +36,7 @@ def test_entry_proposal(mocker):
         "is_recruiting_teammates": False,
         "other_contents": "その他コメント",
         "tags": [],
-        "proposer_wallet_address": test_wallet_address,
+        "user_id": test_user_id,
     }
     request_json = json.dumps(request)
     response = client.post(
