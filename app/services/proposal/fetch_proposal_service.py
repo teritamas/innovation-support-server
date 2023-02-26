@@ -8,10 +8,8 @@ def execute(proposal_id: str) -> tuple[Proposal, User] | None:
     if proposal is None:  # IDに紐づく提案が存在しなければNoneを返す
         print("proposal is None")
         return None
-    user = users_store.fetch_user_from_wallet_address(
-        proposal.proposer_wallet_address
-    )
+    user = users_store.fetch_user(proposal.user_id)
     if user is None:  # IDに紐づくユーザが存在しなければNoneを返す
         print(f"user is None. proposal {proposal}")
         return None
-    return (proposal, user[0])
+    return (proposal, user)

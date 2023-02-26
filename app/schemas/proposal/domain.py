@@ -1,4 +1,5 @@
 from typing import List
+
 from pydantic import BaseModel, Field, PositiveInt
 
 
@@ -23,7 +24,7 @@ class Proposal(BaseModel):
     )
     other_contents: str = Field(False, max_length=8192, description="捕捉情報")
     tags: List[str] = Field(["サンプルA", "サンプルB"], description="キーワード")
+    user_id: str = Field("提案者のユーザID", description="")
 
     # コントラクトに関する設定
-    proposer_wallet_address: str = Field("提案者のアドレス", description="")
     nft_token_id: str = Field("提案NFTのID", description="提案NFTのID")
