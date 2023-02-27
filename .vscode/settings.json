@@ -29,5 +29,5 @@
   "python.linting.pylintEnabled": false,
   "python.linting.mypyEnabled": false,
   "python.testing.autoTestDiscoverOnSaveEnabled": false,
-  "python.languageServer": "Pylance"
+  "python.languageServer": "Pylance",
 }

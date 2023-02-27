@@ -4,7 +4,6 @@ version = "0.1.0"
 description = ""
 authors = ["sey323 <sey323_nm@yahoo.co.jp>"]
 readme = "README.md"
-packages = [{include = "inovation_support_server"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -24,6 +23,7 @@ pytest = "^7.2.1"
 httpx = "^0.23.3"
 pytest-mock = "^3.10.0"
 pytest-asyncio = "^0.20.3"
+pytest-cov = "^4.0.0"
 
 [build-system]
 requires = ["poetry-core"]
