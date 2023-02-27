@@ -39,6 +39,7 @@ jobs:
           DEV_PRIVATE_KEY: ${{secrets.DEV_PRIVATE_KEY}}
           GOOGLE_CLOUD_KEY: ${{vars.GOOGLE_CLOUD_KEY}}
         run: |
+          mkdir -p key/firebase key/wallet
           echo-n $GOOGLE_CLOUD_KEY | base64 --decode > $CRED_PATH
           echo-n $DEV_PRIVATE_KEY | base64 --decode > $SYSTEM_WALLET_PRIVATE_KEY_PATH
           poetry run pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=app tests/ | tee pytest-coverage.txt
