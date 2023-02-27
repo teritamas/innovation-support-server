@@ -37,7 +37,7 @@ jobs:
           PROPOSAL_NFT_CONTRACT_ADDRESS: ${{vars.PROPOSAL_NFT_CONTRACT_ADDRESS}}
           DEFAULT_SLACK_INCOMING_WEBHOOKS_URL: ${{vars.DEFAULT_SLACK_INCOMING_WEBHOOKS_URL}}
           DEV_PRIVATE_KEY: ${{secrets.DEV_PRIVATE_KEY}}
-          GOOGLE_CLOUD_KEY: ${{vars.GOOGLE_CLOUD_KEY}}
+          GOOGLE_CLOUD_KEY: ${{secrets.GOOGLE_CLOUD_KEY}}
         run: |
           mkdir -p key/firebase key/wallet
           echo $GOOGLE_CLOUD_KEY | base64 --decode > $CRED_PATH
