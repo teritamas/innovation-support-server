@@ -4,7 +4,6 @@ version = "0.1.0"
 description = ""
 authors = ["sey323 <sey323_nm@yahoo.co.jp>"]
 readme = "README.md"
-packages = [{include = "inovation_support_server"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
