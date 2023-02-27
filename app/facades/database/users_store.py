@@ -46,3 +46,7 @@ def fetch_user_from_wallet_address(wallet_address: str) -> List[User]:
     )
 
     return [User.parse_obj(user.to_dict()) for user in users]
+
+
+def delete_user(id: str):
+    fire_store.delete(collection=COLLECTION_PREFIX, id=id)
