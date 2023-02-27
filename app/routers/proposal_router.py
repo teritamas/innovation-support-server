@@ -44,6 +44,7 @@ async def entry_proposal(
 def detail_proposal(proposal_id: str):
     proposal, user = fetch_proposal_service.execute(proposal_id=proposal_id)
     if proposal and user:
+        proposal.user_id = user.user_id
         return DetailProposalResponse(
             proposal=proposal,
             proposal_user=user,
