@@ -41,9 +41,7 @@ jobs:
         run: |
           mkdir -p key/firebase key/wallet
           echo $GOOGLE_CLOUD_KEY | base64 --decode > $CRED_PATH
-          cat $CRED_PATH
           echo $DEV_PRIVATE_KEY | base64 --decode > $SYSTEM_WALLET_PRIVATE_KEY_PATH
-          cat $SYSTEM_WALLET_PRIVATE_KEY_PATH
           poetry run pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=app tests/ | tee pytest-coverage.txt
       - name: Comment to PR
         uses: MishaKav/pytest-coverage-comment@main
