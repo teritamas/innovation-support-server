@@ -10,5 +10,6 @@ API の種類や仕様に関しては下記の URL を参照
 
 ```sh:
 poetry install
+poetry run pytest .
 poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
