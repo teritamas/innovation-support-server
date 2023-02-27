@@ -4,14 +4,14 @@ from app.facades.database import proposal_votes_store
 from app.main import app
 from app.schemas.proposal_vote.responses import EntryProposalVoteResponse
 from tests.test_proposal_router import test_entry_proposal
-from tests.test_user_router import test_entry_user
+from tests.test_user_router import test_entry_user_not_exists
 
 client = TestClient(app)
 
 
 def test_entry_proposal_vote(mocker):
     test_entry_proposal(mocker)
-    test_entry_user(mocker)
+    test_entry_user_not_exists(mocker)
 
     # give
     test_proposal_vote_id = "test_proposal_vote_id"

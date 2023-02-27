@@ -11,13 +11,13 @@ from app.schemas.proposal.domain import Proposal
 from app.schemas.proposal.responses import EntryProposalResponse
 from app.schemas.user.domain import User
 from app.utils.common import build_nft_uri
-from tests.test_user_router import test_entry_user
+from tests.test_user_router import test_entry_user_not_exists
 
 client = TestClient(app)
 
 
 def test_entry_proposal(mocker):
-    test_entry_user(mocker=mocker)
+    test_entry_user_not_exists(mocker=mocker)
     test_proposal_id = "test_proposal_id"
     test_user_id = "test_uuid"
     test_file_name = "sample.pdf"
