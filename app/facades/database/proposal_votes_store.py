@@ -43,13 +43,37 @@ def fetch_proposal_vote_by_proposal_id_and_user_id(
         user_id (str): ユーザーID
 
     Returns:
-        List[User]: 投票情報.存在しない場合は、空のListが帰る。
+        List[ProposalVote]: 投票情報.存在しない場合は、空のListが帰る。
     """
     proposal_votes = (
         fire_store()
         .collection(COLLECTION_PREFIX)
         .where("proposal_id", "==", proposal_id)
         .where("user_id", "==", user_id)
+        .stream()
+    )
+
+    return [
+        ProposalVote.parse_obj(proposal_vote.to_dict())
+        for proposal_vote in proposal_votes
+    ]
+
+
+def fetch_proposal_vote_by_proposal_id(
+    proposal_id: str,
+) -> List[ProposalVote]:
+    """提案Idから投票結果情報を検索する。
+
+    Args:
+        proposal_id (str): 提案ID
+
+    Returns:
+        List[ProposalVote]: 投票情報.存在しない場合は、空のListが帰る。
+    """
+    proposal_votes = (
+        fire_store()
+        .collection(COLLECTION_PREFIX)
+        .where("proposal_id", "==", proposal_id)
         .stream()
     )
 
