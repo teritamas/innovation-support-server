@@ -116,7 +116,9 @@ class ProposalNFT(BaseContract):
         tokenId = self.getTokenIdByTransactionLog(tx_result["logs"])
         return tokenId
 
-    def vote(self, target_nft_id: str, voter_address: str, token_amount: int):
+    def vote(
+        self, target_nft_id: str, voter_address: str, token_amount: int
+    ) -> str:
         """提案に対して投票をし、その見返りに投票者にトークンを発行する。
 
         Args:
@@ -125,9 +127,12 @@ class ProposalNFT(BaseContract):
             token_amount (int): 発行するトークン量
         """
         # TODO: 提案に対して投票を行い、投票者にトークンを発行するコントラクトの作成
+        nft_token_id = "hoge"
         logger.info(
             f"vote proposal nft. {target_nft_id=}, {voter_address=}, {token_amount=}"
         )
+
+        return nft_token_id
 
     def burn(self, wallet_address: str, burn_token_amount: int):
         """トークンを消費する。トークンを消費して、福利厚生や研修プロジェクトを受けるユースケースまで実装する場合に実装する。

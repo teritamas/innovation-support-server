@@ -1,22 +1,34 @@
 import os
 
-from fastapi import APIRouter, Body, File, HTTPException, UploadFile, status
+from fastapi import (
+    APIRouter,
+    Body,
+    Depends,
+    File,
+    HTTPException,
+    UploadFile,
+    status,
+)
 from fastapi.responses import FileResponse
 from starlette.background import BackgroundTasks
 
 from app.facades.database.proposals_store import fetch_proposal
+from app.schemas.auth.domain import AuthorizedClientSchema
 from app.schemas.proposal.requests import EntryProposalRequest
 from app.schemas.proposal.responses import (
     DetailProposalResponse,
     EntryProposalResponse,
+    FetchVoteStatusResponse,
     FindProposalResponse,
 )
 from app.services.proposal import (
     download_proposal_attachment_service,
     entry_proposal_service,
     fetch_proposal_service,
+    fetch_proposal_vote_status_service,
     find_proposal_service,
 )
+from app.utils.authorization import authenticate_key
 
 
 def remove_file(path: str) -> None:
@@ -30,9 +42,13 @@ proposal_router = APIRouter(prefix="/proposal", tags=["proposal"])
     "", description="提案登録API.", response_model=EntryProposalResponse
 )
 async def entry_proposal(
-    request: EntryProposalRequest = Body(...), file: UploadFile = File(...)
+    request: EntryProposalRequest = Body(...),
+    file: UploadFile = File(...),
+    auth: AuthorizedClientSchema = Depends(authenticate_key),
 ):
-    proposal_id = await entry_proposal_service.execute(request, file)
+    proposal_id = await entry_proposal_service.execute(
+        auth.user_id, request, file
+    )
     return EntryProposalResponse(proposal_id=proposal_id)
 
 
@@ -41,9 +57,13 @@ async def entry_proposal(
     description="提案詳細取得API.",
     response_model=DetailProposalResponse,
 )
-def detail_proposal(proposal_id: str):
+def detail_proposal(
+    proposal_id: str,
+    _: AuthorizedClientSchema = Depends(authenticate_key),
+):
     proposal, user = fetch_proposal_service.execute(proposal_id=proposal_id)
     if proposal and user:
+        proposal.user_id = user.user_id
         return DetailProposalResponse(
             proposal=proposal,
             proposal_user=user,
@@ -59,7 +79,9 @@ def detail_proposal(proposal_id: str):
     response_description="提案に紐づくPDFファイル",
 )
 def download_proposal_attachment(
-    proposal_id: str, background_tasks: BackgroundTasks
+    proposal_id: str,
+    background_tasks: BackgroundTasks,
+    _: AuthorizedClientSchema = Depends(authenticate_key),
 ):
     response = download_proposal_attachment_service.execute(
         proposal_id=proposal_id
@@ -75,9 +97,41 @@ def download_proposal_attachment(
 
 
 @proposal_router.get(
-    "", description="提案一覧取得API.", response_model=FindProposalResponse
+    "/{proposal_id}/vote_status",
+    description="提案に対する投票状態取得API.",
+    response_model=FetchVoteStatusResponse,
 )
-def find_proposal(tags: str | None = None, words: str | None = None):
+def fetch_proposal_vote_status(
+    proposal_id: str,
+    auth: AuthorizedClientSchema = Depends(authenticate_key),
+):
+    """提案の投票状態を取得する。ユーザが投票済みでない場合は何も返さない"""
+    dto = fetch_proposal_vote_status_service.execute(
+        auth.user_id, proposal_id=proposal_id
+    )
+
+    if dto:
+        response = FetchVoteStatusResponse.parse_obj(dto.dict())
+        response.vote_action = False
+        return response
+    else:
+        return FetchVoteStatusResponse(
+            vote_action=True,
+            positive_proposal_votes=[],
+            negative_proposal_votes=[],
+        )
+
+
+@proposal_router.get(
+    "",
+    description="提案一覧取得API.",
+    response_model=FindProposalResponse,
+)
+def find_proposal(
+    tags: str | None = None,
+    words: str | None = None,
+    _: AuthorizedClientSchema = Depends(authenticate_key),
+):
     # TODO: タグで絞り込みは未実施
     proposals = find_proposal_service.execute(tags, words)
     return FindProposalResponse(proposals=proposals)
