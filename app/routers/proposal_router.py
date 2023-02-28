@@ -18,12 +18,14 @@ from app.schemas.proposal.requests import EntryProposalRequest
 from app.schemas.proposal.responses import (
     DetailProposalResponse,
     EntryProposalResponse,
+    FetchVoteStatusResponse,
     FindProposalResponse,
 )
 from app.services.proposal import (
     download_proposal_attachment_service,
     entry_proposal_service,
     fetch_proposal_service,
+    fetch_proposal_vote_status_service,
     find_proposal_service,
 )
 from app.utils.authorization import authenticate_key
@@ -92,6 +94,32 @@ def download_proposal_attachment(
         )
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+
+@proposal_router.get(
+    "/{proposal_id}/vote_status",
+    description="提案に対する投票状態取得API.",
+    response_model=FetchVoteStatusResponse,
+)
+def fetch_proposal_vote_status(
+    proposal_id: str,
+    auth: AuthorizedClientSchema = Depends(authenticate_key),
+):
+    """提案の投票状態を取得する。ユーザが投票済みでない場合は何も返さない"""
+    dto = fetch_proposal_vote_status_service.execute(
+        auth.user_id, proposal_id=proposal_id
+    )
+
+    if dto:
+        response = FetchVoteStatusResponse.parse_obj(dto.dict())
+        response.vote_action = False
+        return response
+    else:
+        return FetchVoteStatusResponse(
+            vote_action=True,
+            positive_proposal_votes=[],
+            negative_proposal_votes=[],
+        )
 
 
 @proposal_router.get(
