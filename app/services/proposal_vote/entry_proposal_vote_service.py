@@ -10,12 +10,13 @@ from app.utils.common import generate_id_str
 from app.utils.logging import logger
 
 
-def execute(proposal_id: str, request: EntryProposalVoteRequest):
+def execute(user_id: str, proposal_id: str, request: EntryProposalVoteRequest):
     # ユーザーが存在することを確認
-    user = users_store.fetch_user(id=request.user_id)
+    user = users_store.fetch_user(id=user_id)
     if user is None:
-        logger.warn(f"userId is None. {request.user_id=}")
-
+        # authorization.pyで認証しているため、ここがNoneになることはほぼない。
+        # その為Errorログを出しておく
+        logger.error(f"user is none. {user_id}")
         return None
 
     # 提案が存在することを確認
@@ -33,17 +34,21 @@ def execute(proposal_id: str, request: EntryProposalVoteRequest):
         token_amount=10,
     )
 
-    save_db(proposal_id, request, nft_token_id)
+    save_db(user_id, proposal_id, request, nft_token_id)
 
     return nft_token_id
 
 
 def save_db(
-    proposal_id: str, request: EntryProposalVoteRequest, nft_token_id: str
+    user_id: str,
+    proposal_id: str,
+    request: EntryProposalVoteRequest,
+    nft_token_id: str,
 ):
     """投票内容をDBに保存する"""
     proposal_vote_id = generate_id_str()
     proposal_vote = ProposalVote.parse_obj(request)
+    proposal_vote.user_id = user_id
     proposal_vote.proposal_id = proposal_id
     proposal_vote.nft_token_id = nft_token_id
     proposal_votes_store.add_proposal_vote(proposal_vote_id, proposal_vote)
