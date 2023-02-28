@@ -21,7 +21,7 @@ async def execute(
         if proposal_user is None:
             # authorization.pyで認証しているため、ここがNoneになることはほぼない。
             # その為Errorログを出しておく
-            logger.error(f"user is none. {user_id}")
+            logger.error(f"user is none. {user_id=}")
             return None
 
         proposal_id = generate_id_str()

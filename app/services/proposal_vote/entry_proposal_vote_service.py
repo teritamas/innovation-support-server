@@ -16,7 +16,7 @@ def execute(user_id: str, proposal_id: str, request: EntryProposalVoteRequest):
     if user is None:
         # authorization.pyで認証しているため、ここがNoneになることはほぼない。
         # その為Errorログを出しておく
-        logger.error(f"user is none. {user_id}")
+        logger.error(f"user is none. {user_id=}")
         return None
 
     # 提案が存在することを確認
