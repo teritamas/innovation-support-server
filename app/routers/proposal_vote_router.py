@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 
 from app.schemas.proposal_vote.domain import ProposalVote
+from app.schemas.proposal_vote.dto import FetchProposalVoteDto
 from app.schemas.proposal_vote.requests import EntryProposalVoteRequest
 from app.schemas.proposal_vote.responses import (
     EntryProposalVoteResponse,
@@ -34,9 +35,7 @@ def entry_proposal_vote(proposal_id: str, request: EntryProposalVoteRequest):
     response_model=FetchProposalVoteResponse,
 )
 def fetch_proposal_vote(proposal_id: str, vote_user_id: str):
-    response: ProposalVote | None = fetch_proposal_vote_service.execute(
+    dto: FetchProposalVoteDto = fetch_proposal_vote_service.execute(
         proposal_id, vote_user_id
     )
-    if response is None:
-        return FetchProposalVoteResponse(voted=False, vote_content=None)
-    return FetchProposalVoteResponse(voted=True, vote_content=response)
+    return FetchProposalVoteResponse.parse_obj(dto.dict())
