@@ -26,6 +26,7 @@ def entry_proposal_vote(
     request: EntryProposalVoteRequest,
     auth: AuthorizedClientSchema = Depends(authenticate_key),
 ):
+    """提案に対して投票を行う"""
     vote_nft_token_id = entry_proposal_vote_service.execute(
         auth.user_id, proposal_id, request
     )
@@ -44,6 +45,7 @@ def fetch_proposal_vote(
     proposal_id: str,
     auth: AuthorizedClientSchema = Depends(authenticate_key),
 ):
+    """提案に対して投票を行ったかどうかを確認する。投票済みの場合は投票した内容が返る。対象の提案の提案者が自身の場合はその旨が返る。"""
     dto: FetchProposalVoteDto = fetch_proposal_vote_service.execute(
         auth.user_id, proposal_id
     )
