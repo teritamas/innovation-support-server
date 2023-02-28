@@ -19,7 +19,7 @@ client = TestClient(app)
 def test_entry_proposal(mocker):
     test_entry_user_not_exists(mocker=mocker)
     test_proposal_id = "test_proposal_id"
-    test_user_id = "test_uuid"
+    test_user_id = "test_user_id"
     test_file_name = "sample.pdf"
     test_token_id = 1
     mocker.patch(
@@ -46,11 +46,11 @@ def test_entry_proposal(mocker):
         "is_recruiting_teammates": False,
         "other_contents": "その他コメント",
         "tags": [],
-        "user_id": test_user_id,
     }
     request_json = json.dumps(request)
     response = client.post(
         "/proposal",
+        headers={"Authorization": test_user_id},
         files={
             "request": (
                 None,
@@ -66,8 +66,8 @@ def test_entry_proposal(mocker):
 
 @pytest.mark.skipif(True, reason="実際にSlackに通知が飛ぶため、基本的にスキップ")
 def test_entry_proposal_slack_notification(mocker):
+    test_user_id = "test_user_id"
     test_proposal_id = "test_proposal_id"
-    test_wallet_address = "0x7FF84a54d3d7070391Dd9808696Fc547a910af91"
     test_file_name = "sample.pdf"
     mocker.patch(
         "app.services.proposal.entry_proposal_service.generate_id_str",
@@ -75,9 +75,12 @@ def test_entry_proposal_slack_notification(mocker):
     )
     proposals_store.delete_proposal(test_proposal_id)
     proposal_pdf.delete(
-        os.path.join(test_wallet_address, test_proposal_id, test_file_name)
+        build_nft_uri(
+            user_id=test_user_id,
+            proposal_id=test_proposal_id,
+            filename=test_file_name,
+        )
     )
-
     request = {
         "title": "pytestの実行サンプル",
         "descriptions": "テストで挿入されたデータです",
@@ -85,12 +88,12 @@ def test_entry_proposal_slack_notification(mocker):
         "is_recruiting_teammates": False,
         "other_contents": "その他コメント",
         "tags": [],
-        "proposer_wallet_address": test_wallet_address,
         "slack_notification_channels": ["general", "for_develop"],
     }
     request_json = json.dumps(request)
     response = client.post(
         "/proposal",
+        headers={"Authorization": test_user_id},
         files={
             "request": (
                 None,
@@ -105,9 +108,11 @@ def test_entry_proposal_slack_notification(mocker):
 
 
 def test_find_proposal():
+    test_user_id = "test_user_id"
     # give
     response = client.get(
         "/proposal",
+        headers={"Authorization": test_user_id},
     )
 
     assert response.status_code == 200
@@ -119,13 +124,15 @@ def test_find_proposal():
 def test_fetch_proposal(mocker):
     test_entry_proposal(mocker)
     # give
+    test_user_id = "test_user_id"
     test_proposal_id = "test_proposal_id"
     response = client.get(
         f"/proposal/{test_proposal_id}",
+        headers={"Authorization": test_user_id},
     )
 
     assert response.status_code == 200
     actual_proposal = Proposal.parse_obj(response.json().get("proposal"))
     assert actual_proposal.proposal_id == test_proposal_id
     actual_user = User.parse_obj(response.json().get("proposal_user"))
-    assert actual_user.user_id == "test_uuid"
+    assert actual_user.user_id == "test_user_id"
