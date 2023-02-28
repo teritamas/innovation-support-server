@@ -2,6 +2,7 @@ from fastapi.testclient import TestClient
 
 from app.facades.database import proposal_votes_store
 from app.main import app
+from app.schemas.auth.domain import AuthorizedClientSchema
 from app.schemas.proposal_vote.responses import (
     EntryProposalVoteResponse,
     FetchProposalVoteResponse,
@@ -17,6 +18,7 @@ def test_entry_proposal_vote(mocker):
     test_entry_user_not_exists(mocker)
 
     # give
+    test_user_id = "test_user_id"
     test_proposal_vote_id = "test_proposal_vote_id"
     test_proposal_id = "test_proposal_id"
     test_token_id = "test_token_id"
@@ -32,8 +34,8 @@ def test_entry_proposal_vote(mocker):
 
     response = client.post(
         f"/proposal/{test_proposal_id}/vote",
+        headers={"Authorization": test_user_id},
         json={
-            "user_id": "test_uuid",
             "judgement": True,
             "judgement_reason": "テスト",
         },
@@ -48,11 +50,12 @@ def test_fetch_proposal_vote_voted(mocker):
     """投票済みの場合、投票内容が返ること"""
     test_entry_proposal_vote(mocker)
     # give
-    test_user_id = "test_uuid"
+    test_user_id = "test_user_id"
     test_proposal_id = "test_proposal_id"
 
     response = client.get(
-        f"/proposal/{test_proposal_id}/vote/{test_user_id}",
+        f"/proposal/{test_proposal_id}/vote",
+        headers={"Authorization": test_user_id},
     )
 
     assert response.status_code == 200
@@ -62,14 +65,17 @@ def test_fetch_proposal_vote_voted(mocker):
     assert actual.vote_content.proposal_id == test_proposal_id
 
 
-def test_fetch_proposal_vote_not_voted():
+def test_fetch_proposal_vote_not_voted(mocker):
     """投票済みでない場合"""
     # give
-    not_voted_test_user_id = "not_voted_test_uuid"
+    test_user_id = "test_user_id"
     test_proposal_id = "test_proposal_id"
+    test_proposal_vote_id = "test_proposal_vote_id"
+    proposal_votes_store.delete_proposal_vote(test_proposal_vote_id)
 
     response = client.get(
-        f"/proposal/{test_proposal_id}/vote/{not_voted_test_user_id}",
+        f"/proposal/{test_proposal_id}/vote",
+        headers={"Authorization": test_user_id},
     )
 
     assert response.status_code == 200

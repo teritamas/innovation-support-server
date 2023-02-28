@@ -13,16 +13,20 @@ from app.utils.common import build_nft_uri, generate_id_str
 from app.utils.logging import logger
 
 
-async def execute(request: EntryProposalRequest, file: UploadFile) -> str:
+async def execute(
+    user_id: str, request: EntryProposalRequest, file: UploadFile
+) -> str:
     try:
-        proposal_user = users_store.fetch_user(request.user_id)
+        proposal_user = users_store.fetch_user(user_id)
         if proposal_user is None:
-            logger.info(f"user is none. {request.user_id=}")
+            # authorization.pyで認証しているため、ここがNoneになることはほぼない。
+            # その為Errorログを出しておく
+            logger.error(f"user is none. {user_id}")
             return None
 
         proposal_id = generate_id_str()
 
-        nft_uri = await _upload_file(request, file, proposal_id)
+        nft_uri = await _upload_file(user_id, file, proposal_id)
 
         # TODO:  ここでコントラクトの書き込み処理
         nft_token_id = await proposal_nft.mint(
@@ -31,6 +35,7 @@ async def execute(request: EntryProposalRequest, file: UploadFile) -> str:
 
         # FireStoreに保存するフォーマットに変換
         proposal = Proposal.parse_obj(request.dict())
+        proposal.user_id = user_id
         proposal.proposal_id = proposal_id
         proposal.nft_token_id = nft_token_id
         proposal.nft_uri = nft_uri
@@ -53,13 +58,13 @@ async def execute(request: EntryProposalRequest, file: UploadFile) -> str:
         logger.info("error", e)
 
 
-async def _upload_file(request, file, proposal_id) -> str:
+async def _upload_file(user_id, file, proposal_id) -> str:
     """ファイルをGoogle Cloud Storageにアップロードする"""
     data = await file.read()  # アップロードされた画像をbytesに変換する処理
     bin_data: bytes = base64.b64encode(data).decode()
 
     nft_uri = build_nft_uri(
-        request.user_id,
+        user_id,
         proposal_id,
         file.filename,
     )

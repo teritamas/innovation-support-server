@@ -4,7 +4,7 @@ from app.facades.database.proposal_votes_store import (
 from app.schemas.proposal_vote.domain import ProposalVote
 
 
-def execute(proposal_id: str, vote_user_id: str) -> ProposalVote | None:
+def execute(vote_user_id: str, proposal_id: str) -> ProposalVote | None:
     proposal_vote = fetch_proposal_vote_by_proposal_id_and_user_id(
         proposal_id, vote_user_id
     )
