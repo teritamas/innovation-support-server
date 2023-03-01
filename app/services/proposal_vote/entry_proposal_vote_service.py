@@ -1,6 +1,7 @@
 from app.facades.database import (
     proposal_votes_store,
     proposals_store,
+    timelines_store,
     users_store,
 )
 from app.facades.web3 import proposal_nft
@@ -52,3 +53,4 @@ def save_db(
     proposal_vote.proposal_id = proposal_id
     proposal_vote.nft_token_id = nft_token_id
     proposal_votes_store.add_proposal_vote(proposal_vote_id, proposal_vote)
+    timelines_store.add_timeline(content=proposal_vote)

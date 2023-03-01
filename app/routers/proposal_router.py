@@ -128,10 +128,17 @@ def fetch_proposal_vote_status(
     response_model=FindProposalResponse,
 )
 def find_proposal(
-    tags: str | None = None,
-    words: str | None = None,
+    status: str | None = None,
+    title: str | None = None,
+    description: str | None = None,
+    tag: str | None = None,
     _: AuthorizedClientSchema = Depends(authenticate_key),
 ):
     # TODO: タグで絞り込みは未実施
-    proposals = find_proposal_service.execute(tags, words)
+    proposals = find_proposal_service.execute(
+        proposal_status=status,
+        title=title,
+        description=description,
+        tag=tag,
+    )
     return FindProposalResponse(proposals=proposals)

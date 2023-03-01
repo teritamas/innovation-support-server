@@ -27,10 +27,38 @@ def fetch_proposal(id: str) -> Proposal:
     )
 
 
-def find_proposals() -> List[Proposal]:
+def find_proposals(
+    proposal_status: str | None = None,
+    title: str | None = None,
+    description: str | None = None,
+    tag: str | None = None,
+) -> List[Proposal]:
     """提案内容を全て検索する"""
-    proposals = fire_store().collection(COLLECTION_PREFIX).stream()
-    return [Proposal.parse_obj(proposal.to_dict()) for proposal in proposals]
+    proposals_ref = fire_store().collection(COLLECTION_PREFIX)
+
+    if proposal_status:
+        proposals_ref = proposals_ref.where(
+            "proposal_status", "==", proposal_status
+        )
+    if tag:
+        proposals_ref = proposals_ref.where("tags", "array_contains", tag)
+
+    proposals = proposals_ref.stream()
+    proposals_list = [
+        Proposal.parse_obj(proposal.to_dict()) for proposal in proposals
+    ]
+
+    if title:
+        proposals_list = list(
+            filter(lambda x: title in x.title, proposals_list)
+        )
+
+    if description:
+        proposals_list = list(
+            filter(lambda x: description in x.description, proposals_list)
+        )
+
+    return proposals_list
 
 
 def delete_proposal(id: str):
