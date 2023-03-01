@@ -9,6 +9,14 @@ def now() -> datetime:
     return datetime.now(timezone(timedelta(hours=9)))
 
 
+def timestamp(dt: datetime):
+    return datetime.timestamp(dt)
+
+
+def timestamp_to_datetime(ts: float):
+    return datetime.fromtimestamp(ts)
+
+
 def generate_id_str() -> str:
     return str(uuid.uuid4())
 

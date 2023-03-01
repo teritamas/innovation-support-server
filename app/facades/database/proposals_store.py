@@ -28,7 +28,7 @@ def fetch_proposal(id: str) -> Proposal:
 
 
 def find_proposals(
-    status: str | None = None,
+    proposal_status: str | None = None,
     title: str | None = None,
     description: str | None = None,
     tag: str | None = None,
@@ -36,8 +36,10 @@ def find_proposals(
     """提案内容を全て検索する"""
     proposals_ref = fire_store().collection(COLLECTION_PREFIX)
 
-    if status:
-        proposals_ref = proposals_ref.where("status", "==", status)
+    if proposal_status:
+        proposals_ref = proposals_ref.where(
+            "proposal_status", "==", proposal_status
+        )
     if tag:
         proposals_ref = proposals_ref.where("tags", "array_contains", tag)
 

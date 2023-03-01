@@ -136,7 +136,7 @@ def find_proposal(
 ):
     # TODO: タグで絞り込みは未実施
     proposals = find_proposal_service.execute(
-        status=status,
+        proposal_status=status,
         title=title,
         description=description,
         tag=tag,

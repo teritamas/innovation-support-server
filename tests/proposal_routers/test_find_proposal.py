@@ -125,7 +125,7 @@ def _add_proposal(index, status: ProposalStatus):
                 title=f"title_{i}",
                 description=f"description_{i}",
                 proposal_id=proposal_id,
-                status=status,
+                proposal_status=status,
                 tags=[f"tags_{i}", "test"],
             ),
         )
