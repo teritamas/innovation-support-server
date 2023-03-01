@@ -5,13 +5,13 @@ from app.schemas.proposal.domain import Proposal
 
 
 def execute(
-    status: str | None = None,
+    proposal_status: str | None = None,
     title: str | None = None,
     description: str | None = None,
     tag: str | None = None,
 ) -> List[Proposal] | None:
     proposals: List[Proposal] = proposals_store.find_proposals(
-        status=status,
+        proposal_status=proposal_status,
         title=title,
         description=description,
         tag=tag,

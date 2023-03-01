@@ -32,7 +32,9 @@ class Proposal(BaseModel):
     )
     other_contents: str = Field(False, max_length=8192, description="捕捉情報")
     tags: List[str] = Field(["サンプルA", "サンプルB"], description="キーワード")
-    status: ProposalStatus = Field(ProposalStatus.VOTING, description="投票状態")
+    proposal_status: ProposalStatus = Field(
+        ProposalStatus.VOTING, description="投票状態"
+    )
     created_at: datetime = Field(now(), description="作成時刻")
     updated_at: datetime = Field(now(), description="編集時刻")
 
