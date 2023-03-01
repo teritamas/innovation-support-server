@@ -5,7 +5,15 @@ from app.schemas.proposal.domain import Proposal
 
 
 def execute(
-    tags: str | None = None, words: str | None = None
+    status: str | None = None,
+    title: str | None = None,
+    description: str | None = None,
+    tag: str | None = None,
 ) -> List[Proposal] | None:
-    proposals: List[Proposal] = proposals_store.find_proposals()
+    proposals: List[Proposal] = proposals_store.find_proposals(
+        status=status,
+        title=title,
+        description=description,
+        tag=tag,
+    )
     return proposals

@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field, PositiveInt
 
 class EntryProposalRequest(BaseModel):
     title: str = Field(..., max_length=256, description="idea title")
-    descriptions: str = Field(
+    description: str = Field(
         ..., max_length=8192, description="idea description."
     )
     target_amount: PositiveInt = Field(1000, description="目標金額")

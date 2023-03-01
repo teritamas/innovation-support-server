@@ -15,12 +15,12 @@ class EntryProposalResponse(BaseModel):
 
 
 class DetailProposalResponse(BaseModel):
-    proposal: Proposal = Field(Proposal(), descriptions="提案内容")
-    proposal_user: User = Field(User(), descriptions="ユーザ情報")
+    proposal: Proposal = Field(Proposal(), description="提案内容")
+    proposal_user: User = Field(User(), description="ユーザ情報")
 
 
 class FindProposalResponse(BaseModel):
-    proposals: List[Proposal] = Field([Proposal()], descriptions="提案内容一覧")
+    proposals: List[Proposal] = Field([Proposal()], description="提案内容一覧")
 
 
 class FetchVoteStatusResponse(BaseModel):
@@ -29,8 +29,8 @@ class FetchVoteStatusResponse(BaseModel):
         description="投票が必要であればTrueとなる. その場合、positive_proposal_votesとnegative_proposal_votesは空",
     )
     positive_proposal_votes: List[ProposalVote] = Field(
-        [ProposalVote()], descriptions="賛成意見. vote_action=Trueの時は空"
+        [ProposalVote()], description="賛成意見. vote_action=Trueの時は空"
     )
     negative_proposal_votes: List[ProposalVote] = Field(
-        [ProposalVote()], descriptions="反対意見. vote_action=Trueの時は空"
+        [ProposalVote()], description="反対意見. vote_action=Trueの時は空"
     )

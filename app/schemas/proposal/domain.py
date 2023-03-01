@@ -20,9 +20,7 @@ class Proposal(BaseModel):
         "abcdefg", max_length=256, description="識別する固有のID"
     )
     title: str = Field("タイトルサンプル", max_length=256, description="提案のタイトル")
-    descriptions: str = Field(
-        "提案の概要サンプル", max_length=8192, description="提案の概要"
-    )
+    description: str = Field("提案の概要サンプル", max_length=8192, description="提案の概要")
     file_original_name: str = Field(
         "proposal.pdf",
         max_length=8192,
