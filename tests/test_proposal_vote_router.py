@@ -2,14 +2,12 @@ from fastapi.testclient import TestClient
 
 from app.facades.database import proposal_votes_store, users_store
 from app.main import app
-from app.schemas.auth.domain import AuthorizedClientSchema
 from app.schemas.proposal_vote.responses import (
     EntryProposalVoteResponse,
     FetchProposalVoteResponse,
 )
 from app.schemas.user.domain import User
-from tests.test_proposal_router import test_entry_proposal
-from tests.test_user_router import test_entry_user_not_exists
+from tests.proposal_routers.test_entry_proposal import test_entry_proposal
 
 client = TestClient(app)
 
