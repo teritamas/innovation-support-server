@@ -7,11 +7,13 @@ def calculation_judgement_reason(sentence: str) -> float:
 
 
 def _calculation_sentence_len_weight(sentence):
-    sentence_len_weight = 0
+    sentence_len_weight = 0.1
     if len(sentence) > 200:
-        sentence_len_weight = 2
+        sentence_len_weight = 1
     elif len(sentence) > 100:
-        sentence_len_weight = 1.5
+        sentence_len_weight = 0.8
     elif len(sentence) > 50:
-        sentence_len_weight = 1.2
+        sentence_len_weight = 0.5
+    elif len(sentence) > 10:
+        sentence_len_weight = 0.2
     return sentence_len_weight

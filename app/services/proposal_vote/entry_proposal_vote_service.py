@@ -4,6 +4,7 @@ from app.facades.database import (
     timelines_store,
     users_store,
 )
+from app.facades.nlp import rule_base
 from app.facades.web3 import proposal_nft
 from app.schemas.proposal_vote.domain import ProposalVote
 from app.schemas.proposal_vote.requests import EntryProposalVoteRequest
@@ -27,12 +28,15 @@ def execute(user_id: str, proposal_id: str, request: EntryProposalVoteRequest):
         return None
     vote_user_wallet_address = user.wallet_address
 
-    # TODO: 投票内容の評価でトークンの発行量を決める
+    # 投票内容の評価でトークンの発行量を決める
+    score = rule_base.calculation_judgement_reason(request.judgement_reason)
+    mint_token_amount = int(10 * score)
+    logger.info(f"トークン発行. {user_id=}, {mint_token_amount=}")
     # コントラクトの投票処理
     nft_token_id = proposal_nft.vote(
         target_nft_id=proposal.nft_token_id,
         voter_address=vote_user_wallet_address,
-        token_amount=10,
+        token_amount=mint_token_amount,
     )
 
     save_db(user_id, proposal_id, request, nft_token_id)
