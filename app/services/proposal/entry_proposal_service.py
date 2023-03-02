@@ -45,7 +45,10 @@ async def execute(
         proposals_store.add_proposal(id=proposal_id, content=proposal)
         timelines_store.add_timeline(content=proposal)
 
-        if request.slack_notification_channels:  # チャンネルが登録されている場合のみ通知をする
+        if (
+            request.slack_notification_channels
+            and config.default_slack_incoming_webhooks_url == ""
+        ):  # チャンネルが登録されている場合のみ通知をする
             logger.info(
                 f"slack channel. {request.slack_notification_channels=}"
             )
