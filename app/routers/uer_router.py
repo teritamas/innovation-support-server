@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.schemas.auth.domain import AuthorizedClientSchema
 from app.schemas.user.requests import EntryUserRequest
@@ -23,4 +23,7 @@ def detail_user(
     _: AuthorizedClientSchema = Depends(authenticate_key),
 ):
     user = detail_user_service.execute(user_id)
-    return DetailUserResponse(**user.dict())
+    if user:
+        return DetailUserResponse(**user.dict())
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
