@@ -2,6 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from .routers.account_router import account_router
 from .routers.extension_router import extension_router
 from .routers.proposal_router import proposal_router
 from .routers.proposal_vote_router import proposal_vote_router
@@ -25,6 +26,7 @@ def get_application() -> FastAPI:
         allow_headers=["*"],
     )
     # app.middleware("http")(ControllerLoggingMiddleware())
+    app.include_router(account_router)
     app.include_router(user_router)
     app.include_router(proposal_router)
     app.include_router(proposal_vote_router)

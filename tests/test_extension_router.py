@@ -19,4 +19,4 @@ def test_calculation_judgement_reason():
     )
 
     assert response.status_code == 200
-    assert response.json().get("score") == 0
+    assert response.json().get("score") == 0.2

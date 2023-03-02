@@ -8,14 +8,14 @@ from app.facades.storage import proposal_pdf
 from app.main import app
 from app.schemas.proposal.responses import EntryProposalResponse
 from app.utils.common import build_nft_uri
-from tests.test_user_router import test_entry_user_not_exists
+from tests.test_account_router import test_signup_not_exists
 
 client = TestClient(app)
 
 
 def test_entry_proposal(mocker):
     """提案を追加する"""
-    test_entry_user_not_exists(mocker=mocker)
+    test_signup_not_exists(mocker=mocker)
     test_proposal_id = "test_proposal_id"
     test_user_id = "test_user_id"
     test_file_name = "sample.pdf"
