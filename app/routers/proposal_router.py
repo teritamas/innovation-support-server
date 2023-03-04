@@ -59,7 +59,6 @@ async def entry_proposal(
 )
 def detail_proposal(
     proposal_id: str,
-    _: AuthorizedClientSchema = Depends(authenticate_key),
 ):
     proposal, user = fetch_proposal_service.execute(proposal_id=proposal_id)
     if proposal and user:
@@ -132,7 +131,6 @@ def find_proposal(
     title: str | None = None,
     description: str | None = None,
     tag: str | None = None,
-    _: AuthorizedClientSchema = Depends(authenticate_key),
 ):
     # TODO: タグで絞り込みは未実施
     proposals = find_proposal_service.execute(
