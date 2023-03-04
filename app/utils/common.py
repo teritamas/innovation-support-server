@@ -2,19 +2,18 @@ import hashlib
 import os
 import uuid
 from datetime import datetime, timedelta, timezone
-from operator import imod
 
 
 def now() -> datetime:
     return datetime.now(timezone(timedelta(hours=9)))
 
 
-def timestamp(dt: datetime):
+def timestamp_(dt: datetime):
     return datetime.timestamp(dt)
 
 
 def timestamp_to_datetime(ts: float):
-    return datetime.fromtimestamp(ts)
+    return datetime.fromtimestamp(ts, timezone.utc)
 
 
 def generate_id_str() -> str:
