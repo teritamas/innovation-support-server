@@ -21,7 +21,7 @@ def test_signup_not_exists(mocker):
         "/signup",
         json={
             "user_name": "test_user",
-            "wallet_address": "0x7FF84a54d3d7070391Dd9808696Fc547a910af91",
+            "wallet_address": "0xb872960EF2cBDecFdC64115E1C77067c16f042FB",
         },
     )
 
@@ -43,7 +43,7 @@ def test_signup_exists(mocker):
         "/signup",
         json={
             "user_name": "test_user",
-            "wallet_address": "0x7FF84a54d3d7070391Dd9808696Fc547a910af91",
+            "wallet_address": "0xb872960EF2cBDecFdC64115E1C77067c16f042FB",
         },
     )
 
@@ -55,7 +55,7 @@ def test_login_wallet_address(mocker):
     # test_signup_not_exists(mocker)
     # give
     test_user_id = "test_user_id"
-    test_wallet_address = "0x7FF84a54d3d7070391Dd9808696Fc547a910af91"
+    test_wallet_address = "0xb872960EF2cBDecFdC64115E1C77067c16f042FB"
 
     response = client.get(
         f"/login/wallet_address/{test_wallet_address}",

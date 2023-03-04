@@ -1,13 +1,16 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from .routers.account_router import account_router
 from .routers.extension_router import extension_router
 from .routers.proposal_router import proposal_router
 from .routers.proposal_vote_router import proposal_vote_router
 from .routers.timeline_router import timeline_router
-from .routers.uer_router import user_router
+from .routers.user_router import user_router
 
 
 def get_application() -> FastAPI:
@@ -37,6 +40,16 @@ def get_application() -> FastAPI:
 
 
 app: FastAPI = get_application()
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(
+    request: Request, exc: RequestValidationError
+):
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
+    )
 
 
 if __name__ == "__main__":
