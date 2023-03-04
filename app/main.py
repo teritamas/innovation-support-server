@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 
 from .routers.account_router import account_router
 from .routers.extension_router import extension_router
+from .routers.prize_router import prize_router
 from .routers.proposal_router import proposal_router
 from .routers.proposal_vote_router import proposal_vote_router
 from .routers.timeline_router import timeline_router
@@ -34,6 +35,7 @@ def get_application() -> FastAPI:
     app.include_router(proposal_router)
     app.include_router(proposal_vote_router)
     app.include_router(timeline_router)
+    app.include_router(prize_router)
     app.include_router(extension_router)
 
     return app

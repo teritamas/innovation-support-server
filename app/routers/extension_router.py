@@ -1,17 +1,8 @@
-import os
-
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
 from app.facades.nlp import rule_base
-from app.schemas.auth.domain import AuthorizedClientSchema
 from app.schemas.extension.requests import VerifyVoteEnrichmentRequest
 from app.schemas.extension.responses import VerifyVoteEnrichmentResponse
-from app.utils.authorization import authenticate_key
-
-
-def remove_file(path: str) -> None:
-    os.unlink(path)
-
 
 extension_router = APIRouter(prefix="/extension", tags=["extension"])
 
