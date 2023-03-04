@@ -83,5 +83,29 @@ def fetch_proposal_vote_by_proposal_id(
     ]
 
 
+def fetch_proposal_vote_by_user_id(
+    user_id: str,
+) -> List[ProposalVote]:
+    """ユーザIdから投票結果情報を検索する。
+
+    Args:
+        user_id (str): ユーザId
+
+    Returns:
+        List[ProposalVote]: 投票情報.存在しない場合は、空のListが帰る。
+    """
+    proposal_votes = (
+        fire_store()
+        .collection(COLLECTION_PREFIX)
+        .where("user_id", "==", user_id)
+        .stream()
+    )
+
+    return [
+        ProposalVote.parse_obj(proposal_vote.to_dict())
+        for proposal_vote in proposal_votes
+    ]
+
+
 def delete_proposal_vote(id: str):
     fire_store.delete(collection=COLLECTION_PREFIX, id=id)
