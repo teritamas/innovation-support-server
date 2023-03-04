@@ -7,12 +7,15 @@ from app.facades.database import (
 from app.facades.nlp import rule_base
 from app.facades.web3 import proposal_nft
 from app.schemas.proposal_vote.domain import ProposalVote
+from app.schemas.proposal_vote.dto import EntryProposalVoteDto
 from app.schemas.proposal_vote.requests import EntryProposalVoteRequest
 from app.utils.common import generate_id_str
 from app.utils.logging import logger
 
 
-def execute(user_id: str, proposal_id: str, request: EntryProposalVoteRequest):
+def execute(
+    user_id: str, proposal_id: str, request: EntryProposalVoteRequest
+) -> EntryProposalVoteDto:
     # ユーザーが存在することを確認
     user = users_store.fetch_user(id=user_id)
     if user is None:
@@ -41,7 +44,9 @@ def execute(user_id: str, proposal_id: str, request: EntryProposalVoteRequest):
 
     save_db(user_id, proposal_id, request, nft_token_id)
 
-    return nft_token_id
+    return EntryProposalVoteDto(
+        vote_nft_id=mint_token_amount, reword=mint_token_amount
+    )
 
 
 def save_db(

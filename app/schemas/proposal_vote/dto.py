@@ -9,3 +9,8 @@ class FetchProposalVoteDto(BaseModel):
     vote_content: ProposalVote | None = Field(
         None, description="投票済みの場合、投票内容が含まれる。投票済みでない場合、None"
     )
+
+
+class EntryProposalVoteDto(BaseModel):
+    vote_nft_id: str = Field("")
+    reword: int = Field(0)
