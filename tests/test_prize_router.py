@@ -10,6 +10,7 @@ client = TestClient(app)
 
 
 def test_entry_prize(mocker):
+    """景品を登録できること"""
     test_signup_not_exists(mocker)
     # give
     test_user_id = "test_user_id"
@@ -33,3 +34,18 @@ def test_entry_prize(mocker):
     actual = EntryPrizeResponse.parse_obj(response.json())
 
     assert actual.prize_id == test_prize_id
+
+
+def test_find_prize(mocker):
+    """景品の一覧を取得できること"""
+
+    # give
+    test_entry_prize(mocker)
+    response = client.get(
+        f"/prize",
+    )
+
+    assert response.status_code == 200
+    actual = response.json().get("prizes")
+    assert type(actual) == list
+    assert actual[0].get("name") == "テスト景品"

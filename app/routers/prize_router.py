@@ -7,7 +7,7 @@ from app.schemas.prize.responses import (
     EntryPrizeTradeResponse,
     FindPrizeResponse,
 )
-from app.services.prize import entry_prize_service
+from app.services.prize import entry_prize_service, find_prize_service
 from app.utils.authorization import authenticate_key
 
 prize_router = APIRouter(prefix="/prize", tags=["prize"])
@@ -19,7 +19,8 @@ prize_router = APIRouter(prefix="/prize", tags=["prize"])
     response_model=FindPrizeResponse,
 )
 def find_prize():
-    return FindPrizeResponse()
+    prizes = find_prize_service.execute()
+    return FindPrizeResponse(prizes=prizes)
 
 
 @prize_router.post(

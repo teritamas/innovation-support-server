@@ -1,10 +1,12 @@
+from typing import List
+
 from pydantic import BaseModel, Field
 
 from app.schemas.prize.domain import Prize
 
 
-class FindPrizeResponse(Prize):
-    pass
+class FindPrizeResponse(BaseModel):
+    prizes: List[Prize] = Field([], description="登録されている景品の一覧")
 
 
 class EntryPrizeResponse(BaseModel):
