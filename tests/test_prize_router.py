@@ -1,5 +1,8 @@
+from unittest import mock
+
 from fastapi.testclient import TestClient
 
+from app.facades.database import users_store
 from app.main import app
 from app.schemas.prize.requests import EntryPrizeRequest
 from app.schemas.prize.responses import EntryPrizeResponse
@@ -49,3 +52,48 @@ def test_find_prize(mocker):
     actual = response.json().get("prizes")
     assert type(actual) == list
     assert actual[0].get("name") == "テスト景品"
+
+
+def test_entry_prize_trade(mocker):
+    """景品をトークンと交換できること"""
+    # give
+    test_entry_prize(mocker)
+
+    test_user_id = "test_user_id"
+    test_prize_id = "test_prize_id"
+
+    _set_user_balance(test_user_id, 3)
+
+    response = client.post(
+        f"/prize/{test_prize_id}/trade",
+        headers={"Authorization": test_user_id},
+    )
+
+    assert response.status_code == 200
+    actual = response.json().get("balance")
+    assert actual == 1
+
+
+def test_entry_prize_trade_missing(mocker):
+    """残高が十分でない場合、景品をトークンと交換できないこと"""
+    # give
+    test_entry_prize(mocker)
+
+    test_user_id = "test_user_id"
+    test_prize_id = "test_prize_id"
+
+    _set_user_balance(test_user_id, 1)
+
+    response = client.post(
+        f"/prize/{test_prize_id}/trade",
+        headers={"Authorization": test_user_id},
+    )
+
+    assert response.status_code == 400
+
+
+def _set_user_balance(user_id: str, balance: int):
+    """テスト用に、指定したユーザの残高を変更する"""
+    user = users_store.fetch_user(user_id)
+    user.total_token_amount = balance
+    users_store.add_user(id=user_id, content=user)

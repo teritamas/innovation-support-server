@@ -14,4 +14,4 @@ class EntryPrizeResponse(BaseModel):
 
 
 class EntryPrizeTradeResponse(BaseModel):
-    prize_trade_id: str = Field("", description="景品交換ID")
+    balance: int = Field(..., description="景品交換後の残高")

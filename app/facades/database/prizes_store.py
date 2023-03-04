@@ -21,3 +21,36 @@ def find_prize() -> List[Prize]:
 
     prizes = fire_store().collection(COLLECTION_PREFIX).stream()
     return [Prize.parse_obj(prize.to_dict()) for prize in prizes]
+
+
+def fetch_prize(id: str) -> Prize | None:
+    """idから景品情報を検索する。
+
+    Args:
+        id (str): 景品情報
+
+    Returns:
+        Prize | None:
+    """
+    prize_dict = fire_store.fetch(collection=COLLECTION_PREFIX, id=id)
+    return Prize.parse_obj(prize_dict) if prize_dict else None
+
+
+def find_prize() -> List[Prize]:
+    """景品を全て取得する"""
+
+    prizes = fire_store().collection(COLLECTION_PREFIX).stream()
+    return [Prize.parse_obj(prize.to_dict()) for prize in prizes]
+
+
+def fetch_prize(id: str) -> Prize | None:
+    """idから景品情報を検索する。
+
+    Args:
+        id (str): 景品情報
+
+    Returns:
+        Prize | None:
+    """
+    prize_dict = fire_store.fetch(collection=COLLECTION_PREFIX, id=id)
+    return Prize.parse_obj(prize_dict) if prize_dict else None

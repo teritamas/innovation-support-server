@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.schemas.auth.domain import AuthorizedClientSchema
 from app.schemas.prize.requests import EntryPrizeRequest
@@ -7,7 +7,11 @@ from app.schemas.prize.responses import (
     EntryPrizeTradeResponse,
     FindPrizeResponse,
 )
-from app.services.prize import entry_prize_service, find_prize_service
+from app.services.prize import (
+    entry_prize_service,
+    entry_prize_trade_service,
+    find_prize_service,
+)
 from app.utils.authorization import authenticate_key
 
 prize_router = APIRouter(prefix="/prize", tags=["prize"])
@@ -37,7 +41,7 @@ def entry_prize(
 
 
 @prize_router.post(
-    "{prize_id}/trade",
+    "/{prize_id}/trade",
     description="指定した景品をトークンと交換する。",
     response_model=EntryPrizeTradeResponse,
 )
@@ -45,4 +49,13 @@ def entry_prize_trade(
     prize_id: str,
     auth: AuthorizedClientSchema = Depends(authenticate_key),
 ):
-    return EntryPrizeTradeResponse()
+    balance = entry_prize_trade_service.execute(
+        user_id=auth.user_id, prize_id=prize_id
+    )
+    if balance:
+        return EntryPrizeTradeResponse(balance=balance)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="購入できるトークンを所持していない、または存在しないprize_idを指定しています。",
+        )
