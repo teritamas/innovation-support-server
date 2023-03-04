@@ -6,7 +6,12 @@ from app.facades.database import fire_store
 from app.schemas.proposal.domain import Proposal
 from app.schemas.proposal_vote.domain import ProposalVote
 from app.schemas.timeline.domain import Timeline
-from app.utils.common import generate_id_str, timestamp_to_datetime
+from app.utils.common import (
+    generate_id_str,
+    now,
+    timestamp_,
+    timestamp_to_datetime,
+)
 from app.utils.logging import logger
 
 COLLECTION_PREFIX = "timelines"
@@ -51,8 +56,7 @@ def fetch_timelines(timestamp: float | None) -> Timeline:
             contents.append(ProposalVote.parse_obj(timeline_obj))
         else:
             logger.warn(f"Invalid Type. {timeline_obj=}")
-
-    return Timeline(timelines=contents)
+    return Timeline(timestamp=timestamp_(now()), timelines=contents)
 
 
 def has_proposal_vote_keys(timeline_obj):

@@ -9,7 +9,7 @@ from app.facades.web3 import proposal_nft
 from app.schemas.proposal_vote.domain import ProposalVote
 from app.schemas.proposal_vote.dto import EntryProposalVoteDto
 from app.schemas.proposal_vote.requests import EntryProposalVoteRequest
-from app.utils.common import generate_id_str
+from app.utils.common import generate_id_str, now
 from app.utils.logging import logger
 
 
@@ -61,5 +61,7 @@ def save_db(
     proposal_vote.user_id = user_id
     proposal_vote.proposal_id = proposal_id
     proposal_vote.nft_token_id = nft_token_id
+    proposal_vote.created_at = now()
+    proposal_vote.updated_at = now()
     proposal_votes_store.add_proposal_vote(proposal_vote_id, proposal_vote)
     timelines_store.add_timeline(content=proposal_vote)
