@@ -66,6 +66,9 @@ class BaseContract:
     def fetchTokenInfoByTokeId(self, tokenId: int):
         return self.contract.functions.tokenURI(tokenId).call()
 
+    def convert_checksum_address(self, address: str) -> str:
+        return Web3.toChecksumAddress(address)
+
 
 class ProposalNFT(BaseContract):
     """提案NFTのコントラクト"""
@@ -104,7 +107,7 @@ class ProposalNFT(BaseContract):
             identifier (str): 識別子
         """
         tx = self.contract.functions.nftMint(
-            proposer_address, identifier
+            self.convert_checksum_address(proposer_address), identifier
         ).buildTransaction(
             {
                 "nonce": self.network.eth.getTransactionCount(

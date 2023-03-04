@@ -45,7 +45,7 @@ def execute(
     save_db(user_id, proposal_id, request, nft_token_id)
 
     return EntryProposalVoteDto(
-        vote_nft_id=mint_token_amount, reword=mint_token_amount
+        vote_nft_id=nft_token_id, reword=mint_token_amount
     )
 
 
