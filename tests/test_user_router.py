@@ -25,5 +25,5 @@ def test_fetch_user(mocker):
     assert actual_user.message == ""
     assert (
         actual_user.wallet_address
-        == "0x7FF84a54d3d7070391Dd9808696Fc547a910af91"
+        == "0xb872960EF2cBDecFdC64115E1C77067c16f042FB"
     )

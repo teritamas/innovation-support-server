@@ -15,7 +15,6 @@ timeline_router = APIRouter(prefix="/timeline", tags=["timeline"])
 )
 def fetch_timeline(
     timestamp: float | None = None,
-    _: AuthorizedClientSchema = Depends(authenticate_key),
 ):
     """直近のアクティビティを10件取得する"""
     timeline: Timeline = fetch_timeline_service.execute(timestamp)
