@@ -27,6 +27,23 @@ def fetch_proposal(id: str) -> Proposal:
     )
 
 
+def fetch_proposals_by_user_id(
+    user_id: str,
+) -> List[Proposal]:
+    """UserIDに紐づく提案内容を全て検索する"""
+    proposals = (
+        fire_store()
+        .collection(COLLECTION_PREFIX)
+        .where("user_id", "==", user_id)
+        .stream()
+    )
+    proposals_list = [
+        Proposal.parse_obj(proposal.to_dict()) for proposal in proposals
+    ]
+
+    return proposals_list
+
+
 def find_proposals(
     proposal_status: str | None = None,
     title: str | None = None,
