@@ -10,7 +10,7 @@ timeline_router = APIRouter(prefix="/timeline", tags=["timeline"])
 
 
 @timeline_router.get(
-    "/",
+    "",
     response_model=FetchTimelineResponse,
 )
 def fetch_timeline(
