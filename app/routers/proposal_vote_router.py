@@ -27,13 +27,13 @@ def entry_proposal_vote(
     auth: AuthorizedClientSchema = Depends(authenticate_key),
 ):
     """提案に対して投票を行う"""
-    vote_nft_token_id = entry_proposal_vote_service.execute(
+    dto = entry_proposal_vote_service.execute(
         auth.user_id, proposal_id, request
     )
-    if vote_nft_token_id is None:
+    if dto is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return EntryProposalVoteResponse(
-        vote_nft_token_id=vote_nft_token_id, reward=10.0
+        vote_nft_token_id=dto.vote_nft_id, reward=dto.reword
     )
 
 
