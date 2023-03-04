@@ -9,7 +9,7 @@ from app.facades.storage import proposal_pdf
 from app.facades.web3 import proposal_nft
 from app.schemas.proposal.domain import Proposal, ProposalStatus
 from app.schemas.proposal.requests import EntryProposalRequest
-from app.utils.common import build_nft_uri, generate_id_str
+from app.utils.common import build_nft_uri, generate_id_str, now
 from app.utils.logging import logger
 
 
@@ -41,6 +41,8 @@ async def execute(
         proposal.nft_token_id = nft_token_id
         proposal.nft_uri = nft_uri
         proposal.proposal_status = ProposalStatus.VOTING
+        proposal.created_at = now()
+        proposal.updated_at = now()
         proposal.file_original_name = file.filename
 
         proposals_store.add_proposal(id=proposal_id, content=proposal)
