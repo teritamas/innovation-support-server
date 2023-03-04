@@ -17,6 +17,7 @@ async def execute(
     user_id: str, request: EntryProposalRequest, file: UploadFile
 ) -> str:
     try:
+        logger.info(f"entry proposal . {user_id=}, {request=}")
         proposal_user = users_store.fetch_user(user_id)
         if proposal_user is None:
             # authorization.pyで認証しているため、ここがNoneになることはほぼない。
@@ -35,7 +36,7 @@ async def execute(
 
         # FireStoreに保存するフォーマットに変換
         proposal = Proposal.parse_obj(request.dict())
-        proposal.user_id = user_id
+        proposal.user_id = proposal_user.user_id
         proposal.proposal_id = proposal_id
         proposal.nft_token_id = nft_token_id
         proposal.nft_uri = nft_uri
