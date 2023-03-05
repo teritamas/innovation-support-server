@@ -37,7 +37,7 @@ def test_entry_proposal(mocker):
         )
     )
     proposal_thumbnail_image.delete(
-        destination_blob_name=f"{test_proposal_id}.png",
+        destination_blob_name=f"{test_proposal_id}.jpeg",
     )
 
     request = {

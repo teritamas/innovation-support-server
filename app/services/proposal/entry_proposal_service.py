@@ -101,23 +101,11 @@ async def _upload_thumbnail_image_from_pdf(
     proposal_id: str, file: bytes
 ) -> str:
     """pdfからサムネイル画像を生成しGoogle Cloud Storageに保存する"""
-    thumbnail_filename = f"{proposal_id}.png"
+    thumbnail_filename = f"{proposal_id}.jpeg"
     images = convert_from_bytes(
         file,
     )
-    bin_data: bytes = base64.b64encode(image_to_byte_array(images[0])).decode()
-
-    proposal_thumbnail_image.upload(bin_data, thumbnail_filename)
+    proposal_thumbnail_image.upload(
+        destination_blob_name=thumbnail_filename, image=images[0]
+    )
     return thumbnail_filename
-
-
-import io
-
-from PIL import Image
-
-
-def image_to_byte_array(image: Image):
-    imgByteArr = io.BytesIO()
-    image.save(imgByteArr, format=image.format)
-    imgByteArr = imgByteArr.getvalue()
-    return imgByteArr
