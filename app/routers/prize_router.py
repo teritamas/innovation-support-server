@@ -5,11 +5,13 @@ from app.schemas.prize.requests import EntryPrizeRequest
 from app.schemas.prize.responses import (
     EntryPrizeResponse,
     EntryPrizeTradeResponse,
+    FetchPrizeResponse,
     FindPrizeResponse,
 )
 from app.services.prize import (
     entry_prize_service,
     entry_prize_trade_service,
+    fetch_prize_service,
     find_prize_service,
 )
 from app.utils.authorization import authenticate_key
@@ -25,6 +27,22 @@ prize_router = APIRouter(prefix="/prize", tags=["prize"])
 def find_prize():
     prizes = find_prize_service.execute()
     return FindPrizeResponse(prizes=prizes)
+
+
+@prize_router.get(
+    "/{prize_id}",
+    description="コンテンツの詳細を取得する",
+    response_model=FetchPrizeResponse,
+)
+def fetch_prize(prize_id: str):
+    prize = fetch_prize_service.execute(prize_id)
+    if prize:
+        return FetchPrizeResponse(**prize.dict())
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="存在しないprize_idを指定しています。",
+        )
 
 
 @prize_router.post(
