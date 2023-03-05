@@ -35,6 +35,7 @@ def execute(
     score = rule_base.calculation_judgement_reason(request.judgement_reason)
     mint_token_amount = int(10 * score)
     logger.info(f"トークン発行. {user_id=}, {mint_token_amount=}")
+
     # コントラクトの投票処理
     nft_token_id = proposal_nft.vote(
         target_nft_id=proposal.nft_token_id,
@@ -43,9 +44,12 @@ def execute(
     )
 
     save_db(user_id, proposal_id, request, nft_token_id)
+    balance = users_store.add_token_amount(
+        user_id=user_id, amount=mint_token_amount
+    )
 
     return EntryProposalVoteDto(
-        vote_nft_id=nft_token_id, reword=mint_token_amount
+        vote_nft_id=nft_token_id, reword=mint_token_amount, balance=balance
     )
 
 

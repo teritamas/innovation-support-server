@@ -54,6 +54,8 @@ def test_entry_proposal_vote(mocker):
     assert response.status_code == 200
     actual = EntryProposalVoteResponse.parse_obj(response.json())
     assert actual.vote_nft_token_id == "test_token_id"
+    assert actual.reward == 1
+    assert actual.balance == 1
 
 
 def test_fetch_proposal_vote_voted_same_proposal_user(mocker):
