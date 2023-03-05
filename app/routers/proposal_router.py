@@ -114,7 +114,7 @@ def download_proposal_thumbnail(
         background_tasks.add_task(remove_file, response)  # 実行後ファイルを削除
         return FileResponse(
             path=response,
-            media_type="application/png",
+            media_type="image/jpeg",
         )
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)

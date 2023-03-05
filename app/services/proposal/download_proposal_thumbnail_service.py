@@ -1,7 +1,4 @@
-import base64
 import os
-
-from fastapi.responses import FileResponse
 
 from app.facades.database import proposals_store
 from app.facades.storage import proposal_thumbnail_image
@@ -18,7 +15,8 @@ def execute(proposal_id: str) -> str:
     download_byte = proposal_thumbnail_image.download(
         proposal.thumbnail_filename
     )
+
     with open(os.path.basename(proposal.thumbnail_filename), "wb") as f:
-        f.write(base64.b64decode(download_byte))
+        f.write(download_byte)
 
     return proposal.thumbnail_filename
