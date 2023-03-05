@@ -21,5 +21,7 @@ RUN apt-get update \
 ENV API_ENV dev
 WORKDIR /
 COPY ./app /app/
+COPY ./key/ key/
+COPY .env .env
 
 CMD uvicorn app.main:app --host 0.0.0.0 --port 8080
