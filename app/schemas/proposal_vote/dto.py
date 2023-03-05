@@ -14,3 +14,4 @@ class FetchProposalVoteDto(BaseModel):
 class EntryProposalVoteDto(BaseModel):
     vote_nft_id: str = Field("")
     reword: int = Field(0)
+    balance: int = Field(0)
