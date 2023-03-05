@@ -1,7 +1,7 @@
 from app.facades.storage import gcs
 from app.utils.logging import logger
 
-FOLDER_NAME = "ProposalAttachments"
+FOLDER_NAME = "ProposalThumbnailImages"
 
 
 def upload(data: bytes, destination_blob_name: str) -> str:
@@ -10,7 +10,7 @@ def upload(data: bytes, destination_blob_name: str) -> str:
 
     blob.upload_from_string(
         data,
-        content_type="application/pdf",
+        content_type="application/png",
         if_generation_match=generation_match_precondition,
     )
 
@@ -24,6 +24,7 @@ def download(destination_blob_name: str) -> bytes:
 
 
 def delete(destination_blob_name: str):
+    name = f"{FOLDER_NAME}/{destination_blob_name}"
     blob = gcs().blob(f"{FOLDER_NAME}/{destination_blob_name}")
     if blob.exists():
         blob.delete()

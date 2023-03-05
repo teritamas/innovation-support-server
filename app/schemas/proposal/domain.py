@@ -44,3 +44,6 @@ class Proposal(BaseModel):
     # コントラクトに関する設定
     nft_uri: str = Field("", description="提案NFTのURI")
     nft_token_id: str = Field("", description="提案NFTのトークンID")
+
+    # その他
+    thumbnail_filename: str = Field("", description="サムネイル画像のファイルパス")

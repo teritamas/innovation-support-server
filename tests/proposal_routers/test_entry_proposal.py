@@ -4,7 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.facades.database import proposals_store
-from app.facades.storage import proposal_pdf
+from app.facades.storage import proposal_pdf, proposal_thumbnail_image
 from app.main import app
 from app.schemas.proposal.responses import EntryProposalResponse
 from app.utils.common import build_nft_uri
@@ -35,6 +35,9 @@ def test_entry_proposal(mocker):
             proposal_id=test_proposal_id,
             filename=test_file_name,
         )
+    )
+    proposal_thumbnail_image.delete(
+        destination_blob_name=f"{test_proposal_id}.png",
     )
 
     request = {
