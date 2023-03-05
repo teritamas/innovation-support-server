@@ -8,6 +8,8 @@ from app.utils.logging import logger
 FOLDER_NAME = "ProposalThumbnailImages"
 TEMP_FOLDER_NAME = "./temp/thumbnail"
 
+ASPECT_RATIO = 416, 312  # アスペクト比 w:h = 4:3とする
+
 
 def upload(
     destination_blob_name: str,
@@ -32,6 +34,8 @@ def _save_temp_image(destination_blob_name, image):
     """アップロードのため一時的にローカルに保存する"""
     os.makedirs(TEMP_FOLDER_NAME, exist_ok=True)
     temp_image_filename = f"{TEMP_FOLDER_NAME}/{destination_blob_name}"
+
+    image.thumbnail(ASPECT_RATIO, Image.Resampling.LANCZOS)
     image.save(temp_image_filename)
     return temp_image_filename
 
