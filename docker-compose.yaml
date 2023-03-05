@@ -6,3 +6,6 @@ services:
     container_name: innosupo_api
     ports:
       - "8000:8080"
+    volumes:
+      - ./key:/key
+      - .env:/.env
