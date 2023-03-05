@@ -1,12 +1,10 @@
-from unittest import mock
-
 from fastapi.testclient import TestClient
 
 from app.facades.database import users_store
 from app.main import app
+from app.schemas.prize.domain import Prize
 from app.schemas.prize.requests import EntryPrizeRequest
 from app.schemas.prize.responses import EntryPrizeResponse
-from app.schemas.user.domain import User
 from tests.test_account_router import test_signup_not_exists
 
 client = TestClient(app)
@@ -52,6 +50,23 @@ def test_find_prize(mocker):
     actual = response.json().get("prizes")
     assert type(actual) == list
     assert actual[0].get("name") == "テスト景品"
+
+
+def test_fetch_prize(mocker):
+    """景品の詳細を取得できること"""
+
+    # give
+    test_entry_prize(mocker)
+    test_prize_id = "test_prize_id"
+    response = client.get(
+        f"/prize/{test_prize_id}",
+    )
+
+    assert response.status_code == 200
+    actual_prize = Prize.parse_obj(response.json())
+    assert actual_prize.name == "テスト景品"
+    assert actual_prize.description == "テスト用です"
+    assert actual_prize.required_token_amount == 2
 
 
 def test_entry_prize_trade(mocker):

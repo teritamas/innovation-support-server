@@ -16,6 +16,15 @@ def add_prize(id: str, content: Prize):
     fire_store.add(collection=COLLECTION_PREFIX, id=id, content=content.dict())
 
 
+def fetch_prize(
+    id,
+) -> Prize | None:
+    """景品を取得する"""
+
+    prize_dict = fire_store.fetch(collection=COLLECTION_PREFIX, id=id)
+    return Prize.parse_obj(prize_dict) if prize_dict else None
+
+
 def find_prize() -> List[Prize]:
     """景品を全て取得する"""
 
