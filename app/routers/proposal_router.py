@@ -23,6 +23,7 @@ from app.schemas.proposal.responses import (
 )
 from app.services.proposal import (
     download_proposal_attachment_service,
+    download_proposal_thumbnail_service,
     entry_proposal_service,
     fetch_proposal_service,
     fetch_proposal_vote_status_service,
@@ -90,6 +91,30 @@ def download_proposal_attachment(
         return FileResponse(
             path=response,
             media_type="application/pdf",
+        )
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+
+@proposal_router.get(
+    "/{proposal_id}/thumbnail",
+    description="サムネイル取得API.",
+    response_class=FileResponse,
+    response_description="提案のサムネイル",
+)
+def download_proposal_thumbnail(
+    proposal_id: str,
+    background_tasks: BackgroundTasks,
+    _: AuthorizedClientSchema = Depends(authenticate_key),
+):
+    response = download_proposal_thumbnail_service.execute(
+        proposal_id=proposal_id
+    )
+    if response:
+        background_tasks.add_task(remove_file, response)  # 実行後ファイルを削除
+        return FileResponse(
+            path=response,
+            media_type="image/jpeg",
         )
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)

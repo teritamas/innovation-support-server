@@ -1,11 +1,13 @@
 import base64
 
 from fastapi import UploadFile
+from pdf2image import convert_from_bytes
+from PIL import Image
 
 from app import config
 from app.facades.database import proposals_store, timelines_store, users_store
 from app.facades.notification import slack
-from app.facades.storage import proposal_pdf
+from app.facades.storage import proposal_pdf, proposal_thumbnail_image
 from app.facades.web3 import proposal_nft
 from app.schemas.proposal.domain import Proposal, ProposalStatus
 from app.schemas.proposal.requests import EntryProposalRequest
@@ -26,8 +28,14 @@ async def execute(
             return None
 
         proposal_id = generate_id_str()
+        file_bytes_data = await file.read()  # アップロードされた画像をbytesに変換する処理
 
-        nft_uri = await _upload_file(user_id, file, proposal_id)
+        thumbnail_filename: str = await _upload_thumbnail_image_from_pdf(
+            proposal_id=proposal_id, file=file_bytes_data
+        )
+        nft_uri = await _upload_file(
+            user_id, proposal_id, file.filename, file_bytes_data
+        )
 
         # TODO:  ここでコントラクトの書き込み処理
         nft_token_id = await proposal_nft.mint(
@@ -44,6 +52,7 @@ async def execute(
         proposal.created_at = now()
         proposal.updated_at = now()
         proposal.file_original_name = file.filename
+        proposal.thumbnail_filename = thumbnail_filename
 
         proposals_store.add_proposal(id=proposal_id, content=proposal)
         timelines_store.add_timeline(content=proposal)
@@ -66,15 +75,19 @@ async def execute(
         logger.info("error", e)
 
 
-async def _upload_file(user_id, file, proposal_id) -> str:
+async def _upload_file(
+    user_id: str,
+    proposal_id: str,
+    filename: str,
+    file: bytes,
+) -> str:
     """ファイルをGoogle Cloud Storageにアップロードする"""
-    data = await file.read()  # アップロードされた画像をbytesに変換する処理
-    bin_data: bytes = base64.b64encode(data).decode()
+    bin_data: bytes = base64.b64encode(file).decode()
 
     nft_uri = build_nft_uri(
         user_id,
         proposal_id,
-        file.filename,
+        filename,
     )
     proposal_pdf.upload(
         data=bin_data,
@@ -82,3 +95,17 @@ async def _upload_file(user_id, file, proposal_id) -> str:
     )
 
     return nft_uri
+
+
+async def _upload_thumbnail_image_from_pdf(
+    proposal_id: str, file: bytes
+) -> str:
+    """pdfからサムネイル画像を生成しGoogle Cloud Storageに保存する"""
+    thumbnail_filename = f"{proposal_id}.jpeg"
+    images = convert_from_bytes(
+        file,
+    )
+    proposal_thumbnail_image.upload(
+        destination_blob_name=thumbnail_filename, image=images[0]
+    )
+    return thumbnail_filename
