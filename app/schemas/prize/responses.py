@@ -9,6 +9,10 @@ class FindPrizeResponse(BaseModel):
     prizes: List[Prize] = Field([], description="登録されている景品の一覧")
 
 
+class FetchPrizeResponse(Prize):
+    pass
+
+
 class EntryPrizeResponse(BaseModel):
     prize_id: str = Field("", description="景品ID")
 
