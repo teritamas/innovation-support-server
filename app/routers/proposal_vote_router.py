@@ -33,7 +33,9 @@ def entry_proposal_vote(
     if dto is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return EntryProposalVoteResponse(
-        vote_nft_token_id=dto.vote_nft_id, reward=dto.reword
+        vote_nft_token_id=dto.vote_nft_id,
+        reward=dto.reword,
+        balance=dto.balance,
     )
 
 
