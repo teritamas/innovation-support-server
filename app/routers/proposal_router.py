@@ -105,7 +105,6 @@ def download_proposal_attachment(
 def download_proposal_thumbnail(
     proposal_id: str,
     background_tasks: BackgroundTasks,
-    _: AuthorizedClientSchema = Depends(authenticate_key),
 ):
     response = download_proposal_thumbnail_service.execute(
         proposal_id=proposal_id
