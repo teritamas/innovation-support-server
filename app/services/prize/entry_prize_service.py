@@ -8,6 +8,7 @@ def execute(user_id: str, request: EntryPrizeRequest) -> str:
     prize_id = generate_id_str()
 
     prize = Prize.parse_obj(request.dict())
+    prize.prize_id = prize_id
     prize.user_id = user_id
     prize.created_at = now()
     prize.updated_at = now()
