@@ -12,8 +12,16 @@ RUN pip install --upgrade pip &&\
   pip install -r requirements.txt &&\
   rm -rf ~/.cache/pip
 
+RUN apt-get update \
+  && apt-get upgrade -y \
+  && apt-get install -y \
+  poppler-utils \
+  && rm -rf /var/lib/apt/lists/*
+
 ENV API_ENV dev
 WORKDIR /
 COPY ./app /app/
+COPY ./key/ key/
+COPY .env .env
 
 CMD uvicorn app.main:app --host 0.0.0.0 --port 8080
