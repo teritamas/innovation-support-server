@@ -88,6 +88,10 @@ def test_entry_prize_trade(mocker):
     actual = response.json().get("balance")
     assert actual == 1
 
+    user = users_store.fetch_user(id=test_user_id)
+    assert user.purchased_prizes[0].name == "テスト景品"
+    assert user.purchased_prizes[0].description == "テスト用です"
+
 
 def test_entry_prize_trade_missing(mocker):
     """残高が十分でない場合、景品をトークンと交換できないこと"""
