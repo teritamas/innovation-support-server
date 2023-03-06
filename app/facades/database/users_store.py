@@ -1,7 +1,9 @@
 from typing import List
 
 from app.facades.database import fire_store
-from app.schemas.user.domain import User
+from app.schemas.prize.domain import Prize
+from app.schemas.user.domain import User, UserPurchasedPrize
+from app.utils.common import now
 
 COLLECTION_PREFIX = "users"
 
@@ -98,6 +100,25 @@ def reduce_token_amount(user_id: str, amount: int) -> int:
     add_user(id=user_id, content=user)
 
     return balance
+
+
+def add_purchased_prize(user_id: str, prize: Prize) -> User:
+    """ユーザ情報に購入した研修を追加する
+
+    Args:
+        user_id (str): ユーザID
+        prize (Prize): 追加する研修
+
+    Returns:
+        User: 更新後のユーザ
+    """
+    user = fetch_user(id=user_id)
+    user_purchased_prize = UserPurchasedPrize.parse_obj(prize)
+    user_purchased_prize.purchased_date = now()
+    user.purchased_prizes.append(user_purchased_prize)
+
+    add_user(id=user_id, content=user)
+    return user
 
 
 def delete_user(id: str):
