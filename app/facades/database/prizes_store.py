@@ -8,7 +8,6 @@ COLLECTION_PREFIX = "prizes"
 
 def add_prize(id: str, content: Prize):
     """景品内容を新規追加する
-
     Args:
         id (str): prizeId
         content (prize): 追加する景品情報
@@ -25,10 +24,8 @@ def find_prize() -> List[Prize]:
 
 def fetch_prize(id: str) -> Prize | None:
     """idから景品情報を検索する。
-
     Args:
         id (str): 景品情報
-
     Returns:
         Prize | None:
     """
@@ -38,11 +35,9 @@ def fetch_prize(id: str) -> Prize | None:
 
 def purchased_prize(prize_id: str, user_id: str) -> Prize | None:
     """購入したユーザのIDを追加する。
-
     Args:
         prize_id (str): 景品ID
         user_id (str): ユーザID
-
     Returns:
         Prize | None:
     """
