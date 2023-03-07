@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from app.facades.database import users_store
+from app.facades.database import prizes_store, users_store
 from app.main import app
 from app.schemas.prize.domain import Prize
 from app.schemas.prize.requests import EntryPrizeRequest
@@ -87,6 +87,13 @@ def test_entry_prize_trade(mocker):
     assert response.status_code == 200
     actual = response.json().get("balance")
     assert actual == 1
+
+    user = users_store.fetch_user(id=test_user_id)
+    assert user.purchased_prizes[0].name == "テスト景品"
+    assert user.purchased_prizes[0].description == "テスト用です"
+
+    updated_prize = prizes_store.fetch_prize(id=test_prize_id)
+    assert updated_prize.purchased_users[0] == test_user_id
 
 
 def test_entry_prize_trade_missing(mocker):

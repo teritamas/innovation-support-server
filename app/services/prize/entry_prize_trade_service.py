@@ -23,4 +23,13 @@ def execute(user_id: str, prize_id: str) -> str | None:
         user_id=user_id, amount=prize.required_token_amount
     )
 
+    updated_user = users_store.add_purchased_prize(
+        user_id=user_id, prize=prize
+    )
+    updated_prize = prizes_store.purchased_prize(
+        prize_id=prize_id, user_id=user_id
+    )
+
+    logger.info(f"研修の追加が完了しました. {updated_user=}, {updated_prize=}")
+
     return balance
