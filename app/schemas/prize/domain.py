@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import Enum
+from typing import List
 
 from pydantic import BaseModel, Field, PositiveInt
 
@@ -21,6 +22,8 @@ class Prize(BaseModel):
     level: PrizeLevel = Field(PrizeLevel.MIDDLE, description="難易度")
 
     user_id: str = Field("", description="作成したユーザID")
+
+    purchased_users: List[str] = Field([], description="この研修を購入したユーザIDの一覧")
 
     created_at: datetime = Field(now(), description="作成時刻")
     updated_at: datetime = Field(now(), description="編集時刻")

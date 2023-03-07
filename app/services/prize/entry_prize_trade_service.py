@@ -26,6 +26,10 @@ def execute(user_id: str, prize_id: str) -> str | None:
     updated_user = users_store.add_purchased_prize(
         user_id=user_id, prize=prize
     )
-    logger.info(f"研修の追加が完了しました. {updated_user=}")
+    updated_prize = prizes_store.purchased_prize(
+        prize_id=prize_id, user_id=user_id
+    )
+
+    logger.info(f"研修の追加が完了しました. {updated_user=}, {updated_prize=}")
 
     return balance
