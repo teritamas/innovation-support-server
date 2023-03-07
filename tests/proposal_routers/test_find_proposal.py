@@ -25,7 +25,8 @@ def test_find_proposal():
 def test_find_proposal_title_query():
     """タイトルで検索して提案内容の一覧を取得できること"""
     test_user_id = "test_user_id"
-    _add_proposal(3, ProposalStatus.VOTING)
+    proposal_count = 3
+    _add_proposal(proposal_count, ProposalStatus.VOTING)
     test_index = 1
     # give
     response = client.get(
@@ -39,6 +40,7 @@ def test_find_proposal_title_query():
     actual_proposals = Proposal.parse_obj(actual.get("proposals")[0])  # 一つしかない
     assert actual_proposals.title == f"title_{str(test_index)}"
     assert actual_proposals.description == f"description_{str(test_index)}"
+    _delete_proposal(proposal_count)
 
 
 def test_find_proposal_description_query():
@@ -58,6 +60,7 @@ def test_find_proposal_description_query():
     actual_proposals = Proposal.parse_obj(actual.get("proposals")[0])  # 一つしかない
     assert actual_proposals.title == f"title_{str(test_index)}"
     assert actual_proposals.description == f"description_{str(test_index)}"
+    _delete_proposal(proposal_count)
 
 
 def test_find_proposal_status_query():
@@ -76,6 +79,7 @@ def test_find_proposal_status_query():
     actual = response.json()
     assert type(actual) == dict
     assert len(actual.get("proposals")) == proposal_count
+    _delete_proposal(proposal_count)
 
 
 def test_find_proposal_tag_query():
@@ -94,6 +98,7 @@ def test_find_proposal_tag_query():
     actual = response.json()
     assert type(actual) == dict
     assert len(actual.get("proposals")) == proposal_count
+    _delete_proposal(proposal_count)
 
 
 def test_find_proposal_status_and_title_query():
@@ -115,6 +120,8 @@ def test_find_proposal_status_and_title_query():
     assert actual_proposals.title == f"title_{str(test_index)}"
     assert actual_proposals.description == f"description_{str(test_index)}"
 
+    _delete_proposal(proposal_count)
+
 
 def _add_proposal(index, status: ProposalStatus):
     for i in range(index):
@@ -129,3 +136,9 @@ def _add_proposal(index, status: ProposalStatus):
                 tags=[f"tags_{i}", "test"],
             ),
         )
+
+
+def _delete_proposal(index):
+    for i in range(index):
+        proposal_id = f"proposal_{i}"
+        proposals_store.delete_proposal(proposal_id)
