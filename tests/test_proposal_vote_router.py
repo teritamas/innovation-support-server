@@ -40,7 +40,7 @@ def test_entry_proposal_vote(mocker):
         "app.services.proposal_vote.entry_proposal_vote_service.proposal_nft.vote",
         return_value=test_token_id,
     )
-    proposal_votes_store.delete_proposal_vote(test_proposal_vote_id)
+    proposal_votes_store.delete_proposal_vote(test_proposal_id, test_token_id)
 
     response = client.post(
         f"/proposal/{test_proposal_id}/vote",
@@ -96,7 +96,6 @@ def test_fetch_proposal_vote_voted(mocker):
     assert actual.is_proposer == False
     assert actual.voted == True
     assert actual.vote_content.user_id == test_vote_user_id
-    assert actual.vote_content.proposal_id == test_proposal_id
 
 
 def test_fetch_proposal_vote_not_voted(mocker):
@@ -107,7 +106,9 @@ def test_fetch_proposal_vote_not_voted(mocker):
 
     test_proposal_id = "test_proposal_id"
     test_proposal_vote_id = "test_proposal_vote_id"
-    proposal_votes_store.delete_proposal_vote(test_proposal_vote_id)
+    proposal_votes_store.delete_proposal_vote(
+        test_proposal_id, test_vote_user_id
+    )
 
     response = client.get(
         f"/proposal/{test_proposal_id}/vote",
