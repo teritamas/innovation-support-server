@@ -9,7 +9,12 @@ from app.facades.database import proposals_store, timelines_store, users_store
 from app.facades.notification import slack
 from app.facades.storage import proposal_pdf, proposal_thumbnail_image
 from app.facades.web3 import proposal_nft
-from app.schemas.proposal.domain import Proposal, ProposalStatus
+from app.schemas.proposal.domain import (
+    Proposal,
+    ProposalFundraisingCondition,
+    ProposalPhase,
+    ProposalStatus,
+)
 from app.schemas.proposal.requests import EntryProposalRequest
 from app.utils.common import build_nft_uri, generate_id_str, now
 from app.utils.logging import logger
@@ -53,6 +58,9 @@ async def execute(
         proposal.updated_at = now()
         proposal.file_original_name = file.filename
         proposal.thumbnail_filename = thumbnail_filename
+        proposal.proposal_fundraising_condition = build_condition(
+            request.proposal_phase
+        )
 
         proposals_store.add_proposal(id=proposal_id, content=proposal)
         timelines_store.add_timeline(content=proposal)
@@ -73,6 +81,44 @@ async def execute(
 
     except Exception as e:
         logger.info("error", e)
+
+
+def build_condition(phase: ProposalPhase) -> ProposalFundraisingCondition:
+    if phase == ProposalPhase.SEED:
+        limit_date = 7
+        procurement_token_amount = 50  # 500千円
+        min_voter_count = 50
+        min_agreement_count = 0.5
+
+    elif phase == ProposalPhase.EARLY:
+        limit_date = 7
+        procurement_token_amount = 100  # 1,000千円
+        min_voter_count = 100
+        min_agreement_count = 0.5
+    elif phase == ProposalPhase.MIDDLE:
+        limit_date = 14
+        procurement_token_amount = 500  # 5,000千円
+        min_voter_count = 200
+        min_agreement_count = 0.6
+    elif phase == ProposalPhase.LATER:
+        limit_date = 21
+        procurement_token_amount = 1000  # 10,000千円
+        min_voter_count = 300
+        min_agreement_count = 0.7
+    elif phase == ProposalPhase.GROWTH:
+        limit_date = 21
+        procurement_token_amount = 5000  # 50,000千円
+        min_voter_count = 500
+        min_agreement_count = 0.8
+
+    return ProposalFundraisingCondition.parse_obj(
+        {
+            "limit_date": limit_date,
+            "procurement_token_amount": procurement_token_amount,
+            "min_voter_count": min_voter_count,
+            "min_agreement_count": min_agreement_count,
+        }
+    )
 
 
 async def _upload_file(
