@@ -8,10 +8,32 @@ from app.schemas.proposal_vote.domain import ProposalVote
 from app.utils.common import now
 
 
+class ProposalPhase(str, Enum):
+    """https://expact.jp/series-a/"""
+
+    SEED = "seed"  # シード期
+    EARLY = "early"
+    MIDDLE = "middle"
+    LATER = "later"
+    GROWTH = "growth"
+
+
 class ProposalStatus(str, Enum):
     VOTING = "voting"  # 投票中
     REJECT = "reject"  # 否決
     ACCEPT = "accept"  # 可決
+
+
+from pydantic.dataclasses import dataclass
+
+
+class ProposalFundraisingCondition(BaseModel):
+    """資金調達の条件"""
+
+    limit_date: int = Field(0, description="締切までの期間")
+    procurement_token_amount: int = Field(10, description="調達可能なトークン量")
+    min_voter_count: int = Field(0, description="最低投票数")
+    min_agreement_count: float = Field(0, description="賛成の割合(%)")
 
 
 class Proposal(BaseModel):
@@ -36,6 +58,10 @@ class Proposal(BaseModel):
     proposal_status: ProposalStatus = Field(
         ProposalStatus.VOTING, description="投票状態"
     )
+    proposal_phase: ProposalPhase = Field(
+        ProposalPhase.SEED, description="資金調達の種類"
+    )
+
     created_at: datetime = Field(now(), description="作成時刻")
     updated_at: datetime = Field(now(), description="編集時刻")
 
@@ -47,6 +73,9 @@ class Proposal(BaseModel):
     nft_token_id: str = Field("", description="提案NFTのトークンID")
 
     # 投票
+    proposal_fundraising_condition: ProposalFundraisingCondition | None = (
+        Field(None, description="資金調達の条件")
+    )
     votes: List[ProposalVote] = Field([], description="この提案に対して投票された内容")
 
     # その他

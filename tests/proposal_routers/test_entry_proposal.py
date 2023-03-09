@@ -28,17 +28,20 @@ def test_entry_proposal(mocker):
         "app.services.proposal.entry_proposal_service.proposal_nft.mint",
         return_value=test_token_id,
     )
-    proposals_store.delete_proposal(test_proposal_id)
-    proposal_pdf.delete(
-        build_nft_uri(
-            user_id=test_user_id,
-            proposal_id=test_proposal_id,
-            filename=test_file_name,
+    try:
+        proposals_store.delete_proposal(test_proposal_id)
+        proposal_pdf.delete(
+            build_nft_uri(
+                user_id=test_user_id,
+                proposal_id=test_proposal_id,
+                filename=test_file_name,
+            )
         )
-    )
-    proposal_thumbnail_image.delete(
-        destination_blob_name=f"{test_proposal_id}.jpeg",
-    )
+        proposal_thumbnail_image.delete(
+            destination_blob_name=f"{test_proposal_id}.jpeg",
+        )
+    except:
+        pass
 
     request = {
         "title": "pytestの実行サンプル",
@@ -46,6 +49,7 @@ def test_entry_proposal(mocker):
         "target_amount": 1000,
         "is_recruiting_teammates": False,
         "other_contents": "その他コメント",
+        "proposal_phase": "middle",
         "tags": [],
     }
     request_json = json.dumps(request)
