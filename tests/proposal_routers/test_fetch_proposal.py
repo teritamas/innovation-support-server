@@ -146,12 +146,12 @@ def _add_user(test_proposal_id, index, judgement: bool, prefix: str = ""):
     )
 
     proposal_votes_store.add_proposal_vote(
-        f"{prefix}_vote_{index}",
+        test_proposal_id,
         ProposalVote(
-            proposal_id=test_proposal_id,
             user_id=user_id,
             judgement=judgement,
             judgement_reason=f"{prefix} vote no {index}",
+            mint_token_amount=int(index),
         ),
     )
 

@@ -3,6 +3,8 @@ from typing import List
 
 from pydantic import BaseModel, Field, PositiveInt
 
+from app.schemas.proposal.domain import ProposalPhase
+
 
 class EntryProposalRequest(BaseModel):
     title: str = Field(..., max_length=256, description="idea title")
@@ -13,8 +15,12 @@ class EntryProposalRequest(BaseModel):
     is_recruiting_teammates: bool = Field(
         False, description="チームメイトを募集する場合：true　"
     )
-    other_contents: str = Field("その他コメント", max_length=8192, description="捕捉情報")
+    other_contents: str = Field("その他コメント", max_length=8192, description="補足情報")
     tags: List[str] = Field([], description="キーワード")
+
+    proposal_phase: ProposalPhase = Field(
+        ProposalPhase.SEED, description="資金調達の種類"
+    )
 
     slack_notification_channels: List[str] | None = Field(
         None, description="提案の投稿を通知するチャンネル"

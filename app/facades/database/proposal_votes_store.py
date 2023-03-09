@@ -1,36 +1,21 @@
 from typing import List
 
-from app.facades.database import fire_store
+from app.facades.database import fire_store, proposals_store
 from app.schemas.proposal_vote.domain import ProposalVote
 
-COLLECTION_PREFIX = "proposal_votes"
+COLLECTION_PREFIX = "proposals"
 
 
 def add_proposal_vote(id: str, content: ProposalVote):
-    """投票結果を新規追加する
+    """提案に投票結果を付与する
 
     Args:
         id (str): proposal_voteId
         content (ProposalVote): 追加する投票結果情報
     """
-    fire_store.add(collection=COLLECTION_PREFIX, id=id, content=content.dict())
-
-
-def fetch_proposal_vote(id: str) -> ProposalVote | None:
-    """idから投票結果情報を検索する。
-
-    Args:
-        id (str): 投票結果情報
-
-    Returns:
-        ProposalVote | None:
-    """
-    proposal_vote_dict = fire_store.fetch(collection=COLLECTION_PREFIX, id=id)
-    return (
-        ProposalVote.parse_obj(proposal_vote_dict)
-        if proposal_vote_dict
-        else None
-    )
+    proposal = proposals_store.fetch_proposal(id=id)
+    proposal.votes.append(content)
+    proposals_store.add_proposal(id=id, content=proposal)
 
 
 def fetch_proposal_vote_by_proposal_id_and_user_id(
@@ -45,17 +30,16 @@ def fetch_proposal_vote_by_proposal_id_and_user_id(
     Returns:
         List[ProposalVote]: 投票情報.存在しない場合は、空のListが帰る。
     """
-    proposal_votes = (
-        fire_store()
-        .collection(COLLECTION_PREFIX)
-        .where("proposal_id", "==", proposal_id)
-        .where("user_id", "==", user_id)
-        .stream()
-    )
+    proposal = proposals_store.fetch_proposal(id=proposal_id)
 
+    if proposal is None:
+        return []
+
+    proposal_votes = proposal.votes
     return [
-        ProposalVote.parse_obj(proposal_vote.to_dict())
+        proposal_vote
         for proposal_vote in proposal_votes
+        if proposal_vote.user_id == user_id
     ]
 
 
@@ -70,17 +54,11 @@ def fetch_proposal_vote_by_proposal_id(
     Returns:
         List[ProposalVote]: 投票情報.存在しない場合は、空のListが帰る。
     """
-    proposal_votes = (
-        fire_store()
-        .collection(COLLECTION_PREFIX)
-        .where("proposal_id", "==", proposal_id)
-        .stream()
-    )
+    proposal = proposals_store.fetch_proposal(id=proposal_id)
+    if proposal is None:
+        return []
 
-    return [
-        ProposalVote.parse_obj(proposal_vote.to_dict())
-        for proposal_vote in proposal_votes
-    ]
+    return proposal.votes
 
 
 def fetch_proposal_vote_by_user_id(
@@ -94,18 +72,30 @@ def fetch_proposal_vote_by_user_id(
     Returns:
         List[ProposalVote]: 投票情報.存在しない場合は、空のListが帰る。
     """
-    proposal_votes = (
-        fire_store()
-        .collection(COLLECTION_PREFIX)
-        .where("user_id", "==", user_id)
-        .stream()
-    )
+    proposals_col = fire_store().collection(COLLECTION_PREFIX).stream()
 
-    return [
-        ProposalVote.parse_obj(proposal_vote.to_dict())
+    proposal_votes: List[ProposalVote] = []
+
+    for proposal in proposals_col:
+        user_vote = fetch_proposal_vote_by_proposal_id_and_user_id(
+            proposal_id=proposal.id, user_id=user_id
+        )
+        proposal_votes.extend(user_vote)
+    return proposal_votes
+
+
+def delete_proposal_vote(proposal_id: str, user_id):
+    """投票内容を削除する(テストでのみ利用)"""
+    proposal = proposals_store.fetch_proposal(id=proposal_id)
+
+    if proposal is None:
+        return []
+
+    # 引数に与えられたユーザIDのみ削除して再代入する
+    proposal_votes = proposal.votes
+    proposal.votes = [
+        proposal_vote
         for proposal_vote in proposal_votes
+        if proposal_vote.user_id != user_id
     ]
-
-
-def delete_proposal_vote(id: str):
-    fire_store.delete(collection=COLLECTION_PREFIX, id=id)
+    proposals_store.add_proposal(id=proposal_id, content=proposal)
