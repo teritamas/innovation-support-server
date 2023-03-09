@@ -43,7 +43,7 @@ def execute(
         token_amount=mint_token_amount,
     )
 
-    save_db(user_id, proposal_id, request, nft_token_id)
+    save_db(user_id, proposal_id, request, nft_token_id, mint_token_amount)
     balance = users_store.add_token_amount(
         user_id=user_id, amount=mint_token_amount
     )
@@ -58,14 +58,13 @@ def save_db(
     proposal_id: str,
     request: EntryProposalVoteRequest,
     nft_token_id: str,
+    mint_token_amount: int,
 ):
     """投票内容をDBに保存する"""
-    proposal_vote_id = generate_id_str()
     proposal_vote = ProposalVote.parse_obj(request)
     proposal_vote.user_id = user_id
-    proposal_vote.proposal_id = proposal_id
-    proposal_vote.nft_token_id = nft_token_id
+    proposal_vote.mint_token_amount = mint_token_amount
     proposal_vote.created_at = now()
     proposal_vote.updated_at = now()
-    proposal_votes_store.add_proposal_vote(proposal_vote_id, proposal_vote)
+    proposal_votes_store.add_proposal_vote(proposal_id, proposal_vote)
     timelines_store.add_timeline(content=proposal_vote)

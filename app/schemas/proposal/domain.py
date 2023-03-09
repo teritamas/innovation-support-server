@@ -4,6 +4,7 @@ from typing import List
 
 from pydantic import BaseModel, Field
 
+from app.schemas.proposal_vote.domain import ProposalVote
 from app.utils.common import now
 
 
@@ -44,6 +45,9 @@ class Proposal(BaseModel):
     # コントラクトに関する設定
     nft_uri: str = Field("", description="提案NFTのURI")
     nft_token_id: str = Field("", description="提案NFTのトークンID")
+
+    # 投票
+    votes: List[ProposalVote] = Field([], description="この提案に対して投票された内容")
 
     # その他
     thumbnail_filename: str = Field("", description="サムネイル画像のファイルパス")
