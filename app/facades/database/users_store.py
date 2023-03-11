@@ -102,6 +102,31 @@ def reduce_token_amount(user_id: str, amount: int) -> int:
     return balance
 
 
+def update_token_amount(user_id: str, balance: int) -> User:
+    """トークン量を更新する
+
+    Args:
+        user_id (str): 対象のユーザID
+        balance (int): 更新後の残高
+
+    Raises:
+        RuntimeError: 存在しないユーザIDが指定された場合
+
+    Returns:
+        user: 更新後のユーザ
+    """
+
+    user = fetch_user(user_id)
+    if user is None:
+        raise RuntimeError(f"{user_id=} is not found.")
+
+    user.total_token_amount = balance
+
+    add_user(id=user_id, content=user)
+
+    return user
+
+
 def add_purchased_prize(user_id: str, prize: Prize) -> User:
     """ユーザ情報に購入した研修を追加する
 

@@ -3,6 +3,8 @@ from app.facades.database import (
     proposals_store,
     users_store,
 )
+from app.facades.web3 import inosapo_ft
+from app.schemas.user.domain import User
 from app.schemas.user.dto import DetailUserDto
 
 
@@ -12,7 +14,12 @@ def execute(user_id) -> DetailUserDto | None:
     if user is None:
         return None
 
-    dto = DetailUserDto(**user.dict())
+    balance: int = inosapo_ft.balance_of_address(user.wallet_address)
+    updated_user: User = users_store.update_token_amount(
+        user_id=user.user_id, balance=balance
+    )
+
+    dto = DetailUserDto(**updated_user.dict())
 
     user_own_proposals = proposals_store.fetch_proposals_by_user_id(
         user_id=user_id
