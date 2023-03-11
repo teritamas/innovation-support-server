@@ -1,6 +1,6 @@
 from app import config
 from app.facades.web3.account import ContractOwner
-from app.facades.web3.smart_contracts import ProposalNFT
+from app.facades.web3.smart_contracts.proposal_nft import ProposalNFT
 
 # 提案用NFT
 proposal_nft = ProposalNFT(
