@@ -38,7 +38,7 @@ class InosapoFT(BaseContract):
     async def transfer(self, address, amount):
         """管理者アドレスのトークンを指定したユーザのアドレスに移管する"""
         tx = self.contract.functions.transfer(
-            address, amount
+            self.convert_checksum_address(address), amount
         ).buildTransaction(
             {
                 "nonce": self.network.eth.getTransactionCount(
@@ -52,8 +52,8 @@ class InosapoFT(BaseContract):
 
     async def burn(self, address, amount):
         """ウォレットアドレスが所有しているトークンを削除する"""
-        tx = self.contract.functions.transfer(
-            address, amount
+        tx = self.contract.functions.burn(
+            self.convert_checksum_address(address), amount
         ).buildTransaction(
             {
                 "nonce": self.network.eth.getTransactionCount(
@@ -67,7 +67,9 @@ class InosapoFT(BaseContract):
 
     def balance_of_address(self, address):
         """ウォレットアドレスが所有しているトークン量を返す"""
-        return self.contract.functions.balanceOf(address).call()
+        return self.contract.functions.balanceOf(
+            self.convert_checksum_address(address)
+        ).call()
 
     def balance_of_deposit(
         self,

@@ -13,7 +13,7 @@ from app.utils.common import generate_id_str, now
 from app.utils.logging import logger
 
 
-def execute(
+async def execute(
     user_id: str, proposal_id: str, request: EntryProposalVoteRequest
 ) -> EntryProposalVoteDto:
     # ユーザーが存在することを確認
@@ -35,7 +35,7 @@ def execute(
     score = rule_base.calculation_judgement_reason(request.judgement_reason)
     mint_token_amount = int(10 * score)
     logger.info(f"トークン発行. {user_id=}, {mint_token_amount=}")
-    inosapo_ft.transfer(user.wallet_address, amount=mint_token_amount)
+    await inosapo_ft.transfer(user.wallet_address, amount=mint_token_amount)
 
     # コントラクトの投票処理
     nft_token_id = "pass"  # 開発予定であったが発行する意義を見出せなかったため一旦利用しない
