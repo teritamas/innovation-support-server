@@ -5,7 +5,7 @@ from app.facades.database import (
     users_store,
 )
 from app.facades.nlp import rule_base
-from app.facades.web3 import proposal_nft
+from app.facades.web3 import inosapo_ft
 from app.schemas.proposal_vote.domain import ProposalVote
 from app.schemas.proposal_vote.dto import EntryProposalVoteDto
 from app.schemas.proposal_vote.requests import EntryProposalVoteRequest
@@ -13,7 +13,7 @@ from app.utils.common import generate_id_str, now
 from app.utils.logging import logger
 
 
-def execute(
+async def execute(
     user_id: str, proposal_id: str, request: EntryProposalVoteRequest
 ) -> EntryProposalVoteDto:
     # ユーザーが存在することを確認
@@ -35,13 +35,15 @@ def execute(
     score = rule_base.calculation_judgement_reason(request.judgement_reason)
     mint_token_amount = int(10 * score)
     logger.info(f"トークン発行. {user_id=}, {mint_token_amount=}")
+    await inosapo_ft.transfer(user.wallet_address, amount=mint_token_amount)
 
     # コントラクトの投票処理
-    nft_token_id = proposal_nft.vote(
-        target_nft_id=proposal.nft_token_id,
-        voter_address=vote_user_wallet_address,
-        token_amount=mint_token_amount,
-    )
+    nft_token_id = "pass"  # 開発予定であったが発行する意義を見出せなかったため一旦利用しない
+    # nft_token_id = proposal_nft.vote(
+    #     target_nft_id=proposal.nft_token_id,
+    #     voter_address=vote_user_wallet_address,
+    #     token_amount=mint_token_amount,
+    # )
 
     save_db(user_id, proposal_id, request, nft_token_id, mint_token_amount)
     balance = users_store.add_token_amount(

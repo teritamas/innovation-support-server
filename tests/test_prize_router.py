@@ -77,7 +77,7 @@ def test_entry_prize_trade(mocker):
     test_user_id = "test_user_id"
     test_prize_id = "test_prize_id"
 
-    _set_user_balance(test_user_id, 3)
+    _set_user_balance(mocker, [3, 1])
 
     response = client.post(
         f"/prize/{test_prize_id}/trade",
@@ -104,7 +104,7 @@ def test_entry_prize_trade_missing(mocker):
     test_user_id = "test_user_id"
     test_prize_id = "test_prize_id"
 
-    _set_user_balance(test_user_id, 1)
+    _set_user_balance(mocker, [1])
 
     response = client.post(
         f"/prize/{test_prize_id}/trade",
@@ -114,8 +114,13 @@ def test_entry_prize_trade_missing(mocker):
     assert response.status_code == 400
 
 
-def _set_user_balance(user_id: str, balance: int):
+def _set_user_balance(mocker, balances):
     """テスト用に、指定したユーザの残高を変更する"""
-    user = users_store.fetch_user(user_id)
-    user.total_token_amount = balance
-    users_store.add_user(id=user_id, content=user)
+    mocker.patch(  # test_signup_not_existsではトークン量を0で登録し、実際のトークン量=10で更新されることを確認する
+        "app.services.prize.entry_prize_trade_service.inosapo_ft.balance_of_address",
+        side_effect=balances,
+    )
+
+    mocker.patch(  # test_signup_not_existsではトークン量を0で登録し、実際のトークン量=10で更新されることを確認する
+        "app.services.prize.entry_prize_trade_service.inosapo_ft.burn",
+    )
