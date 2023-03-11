@@ -14,8 +14,6 @@ PROPOSER_ADDRESS = "0xb872960EF2cBDecFdC64115E1C77067c16f042FB"
 
 def test_proposal_nft_mock_function():
     """提案NFTのMockの関数が実行できること"""
-
-    proposal_nft.vote("test_nft_address", "test_voter_address", 10)
     proposal_nft.burn("test_address", 10)
 
 

@@ -26,6 +26,9 @@ class BaseContract:
         self.contract = self.network.eth.contract(
             address=contract_address, abi=self._load_abi(api_json_path)
         )
+        logger.info(
+            f"Owner Wallet Address: {contract_owner.address}, 残高: {Web3.fromWei(self.network.eth.get_balance(contract_owner.address),'ether')} ether"  # NOQA
+        )
 
         token_name = self.contract.functions.name().call()
         token_symbol = self.contract.functions.symbol().call()
@@ -33,10 +36,10 @@ class BaseContract:
             Web3.toChecksumAddress(self.contract_owner.address)
         ).call()
         logger.info(
-            f"NFT Name: {token_name}, NFT Symbol: {token_symbol}, NFT 残高: {balance}"  # NOQA
+            f"Contract Name: {token_name}, Symbol: {token_symbol}, 残高: {balance}"  # NOQA
         )
         logger.info(
-            f"Owner Wallet Address: {contract_owner.address}, 残高: {self.network.eth.get_balance(contract_owner.address)}"  # NOQA
+            f"Contract Address: {contract_address}, Network: {provider_network_url}"  # NOQA
         )
 
     @staticmethod
@@ -45,6 +48,7 @@ class BaseContract:
             return json.load(j)
 
     def execute(self, tx):
+        """トランザクション実行の共通処理"""
         signed_tx = self.network.eth.account.signTransaction(
             tx, self.contract_owner.private_key
         )
@@ -56,15 +60,19 @@ class BaseContract:
     def owner(
         self,
     ):
+        """コントラクトの所有者を取得"""
         return self.contract.functions.owner().call()
 
     def name(
         self,
     ):
+        """コントラクトの名称を取得"""
         return self.contract.functions.name().call()
 
     def fetchTokenInfoByTokeId(self, tokenId: int):
+        """トークンIDからNFTのURIを取得する"""
         return self.contract.functions.tokenURI(tokenId).call()
 
     def convert_checksum_address(self, address: str) -> str:
+        """Metamaskで取得するアドレスがチェックサムアドレスでないのでチェックサムアドレスに変換する。"""
         return Web3.toChecksumAddress(address)
