@@ -21,6 +21,13 @@ if proposal_nft_contract_address == "":
     )
     exit()
 
+inosapo_ft_contract_address = environ.get("INOSAPO_FT_CONTRACT_ADDRESS", "")
+if inosapo_ft_contract_address == "":
+    print(
+        f"INOSAPO_FT_CONTRACT_ADDRESS is required. {inosapo_ft_contract_address=}"
+    )
+    exit()
+
 """
 必要に応じて設定
 """

@@ -37,8 +37,7 @@ def test_entry_proposal_vote(mocker):
         return_value=test_proposal_vote_id,
     )
     mocker.patch(
-        "app.services.proposal_vote.entry_proposal_vote_service.proposal_nft.vote",
-        return_value=test_token_id,
+        "app.services.proposal_vote.entry_proposal_vote_service.inosapo_ft.transfer",
     )
     proposal_votes_store.delete_proposal_vote(test_proposal_id, test_token_id)
 
@@ -53,7 +52,6 @@ def test_entry_proposal_vote(mocker):
 
     assert response.status_code == 200
     actual = EntryProposalVoteResponse.parse_obj(response.json())
-    assert actual.vote_nft_token_id == "test_token_id"
     assert actual.reward == 1
     assert actual.balance == 1
 
