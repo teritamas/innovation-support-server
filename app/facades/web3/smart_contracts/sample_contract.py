@@ -21,3 +21,15 @@ class SampleNFT(BaseContract):
             f"./app/assets/abi/{contract_address}.json",
             provider_network_url,
         )
+
+    def owner(
+        self,
+    ):
+        """コントラクトの所有者を取得"""
+        return self.contract.functions.owner().call()
+
+    def name(
+        self,
+    ):
+        """コントラクトの名称を取得"""
+        return self.contract.functions.name().call()

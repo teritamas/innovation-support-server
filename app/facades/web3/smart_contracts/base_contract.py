@@ -29,15 +29,6 @@ class BaseContract:
         logger.info(
             f"Owner Wallet Address: {contract_owner.address}, 残高: {Web3.fromWei(self.network.eth.get_balance(contract_owner.address),'ether')} ether"  # NOQA
         )
-
-        token_name = self.contract.functions.name().call()
-        token_symbol = self.contract.functions.symbol().call()
-        balance = self.contract.functions.balanceOf(
-            Web3.toChecksumAddress(self.contract_owner.address)
-        ).call()
-        logger.info(
-            f"Contract Name: {token_name}, Symbol: {token_symbol}, 残高: {balance}"  # NOQA
-        )
         logger.info(
             f"Contract Address: {contract_address}, Network: {provider_network_url}"  # NOQA
         )
@@ -56,22 +47,6 @@ class BaseContract:
         tx_hash = self.network.eth.sendRawTransaction(signed_tx.rawTransaction)
 
         return self.network.eth.wait_for_transaction_receipt(tx_hash)
-
-    def owner(
-        self,
-    ):
-        """コントラクトの所有者を取得"""
-        return self.contract.functions.owner().call()
-
-    def name(
-        self,
-    ):
-        """コントラクトの名称を取得"""
-        return self.contract.functions.name().call()
-
-    def fetchTokenInfoByTokeId(self, tokenId: int):
-        """トークンIDからNFTのURIを取得する"""
-        return self.contract.functions.tokenURI(tokenId).call()
 
     def convert_checksum_address(self, address: str) -> str:
         """Metamaskで取得するアドレスがチェックサムアドレスでないのでチェックサムアドレスに変換する。"""

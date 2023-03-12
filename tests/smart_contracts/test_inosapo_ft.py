@@ -10,15 +10,13 @@ from app.facades.web3.smart_contracts.inosapo_ft import InosapoFT
 
 pytest_plugins = ("pytest_asyncio",)
 
-PROVIDER_NETWORK = "https://goerli.blockpi.network/v1/rpc/public"
-SAMPLE_CONTRACT_ADDRESS = "0x99802244430b37362Eb494ec5Ce92fBC8F38f36C"
-PERSONAL_NFT_ADDRESS = "0x46f14F3Dd30465Fa2AA1cA929BceFc9FeE2ad0c9"
-INOSAPO_FT_CONTRACT_ADDRESS = "0x8e171eE23506D3B2403B59995D7D8a7F09CfA388"
+PROVIDER_NETWORK = config.provider_network
+INOSAPO_FT_CONTRACT_ADDRESS = config.inosapo_ft_contract_address
 VOTER_ADDRESS = "0xb872960EF2cBDecFdC64115E1C77067c16f042FB"
 
 
 def test_inosapo_ft_contract_function():
-    """ネットワークに接続しサンプルのコントラクトを実行できること"""
+    """ネットワークに接続しトランザクションを必要としない関数を実行できること"""
     # 動作確認用なので固定
     inosapo_ft = InosapoFT(
         contract_owner=ContractOwner(config.system_wallet_private_key_path),

@@ -2,13 +2,12 @@ import base64
 
 from fastapi import UploadFile
 from pdf2image import convert_from_bytes
-from PIL import Image
 
 from app import config
 from app.facades.database import proposals_store, timelines_store, users_store
 from app.facades.notification import slack
 from app.facades.storage import proposal_pdf, proposal_thumbnail_image
-from app.facades.web3 import proposal_nft
+from app.facades.web3 import inosapo_ft, proposal_nft, proposal_vote
 from app.schemas.proposal.domain import (
     Proposal,
     ProposalFundraisingCondition,
@@ -42,10 +41,20 @@ async def execute(
             user_id, proposal_id, file.filename, file_bytes_data
         )
 
+        proposal_fundraising_condition = build_condition(
+            request.proposal_phase
+        )
+
         # TODO:  ここでコントラクトの書き込み処理
         nft_token_id = await proposal_nft.mint(
-            proposal_user.wallet_address, identifier=nft_uri
+            proposal_user.wallet_address,
+            identifier=nft_uri,
+            amount=proposal_fundraising_condition.procurement_token_amount,
         )
+        await inosapo_ft.transfer_to_vote_contract(
+            proposal_fundraising_condition.procurement_token_amount
+        )
+        await proposal_vote.entry_proposal(tokenId=nft_token_id)
 
         # FireStoreに保存するフォーマットに変換
         proposal = Proposal.parse_obj(request.dict())
@@ -58,8 +67,8 @@ async def execute(
         proposal.updated_at = now()
         proposal.file_original_name = file.filename
         proposal.thumbnail_filename = thumbnail_filename
-        proposal.proposal_fundraising_condition = build_condition(
-            request.proposal_phase
+        proposal.proposal_fundraising_condition = (
+            proposal_fundraising_condition
         )
 
         proposals_store.add_proposal(id=proposal_id, content=proposal)

@@ -1,3 +1,4 @@
+import pytest
 from fastapi.testclient import TestClient
 
 from app.facades.database import proposal_votes_store, users_store
@@ -38,6 +39,9 @@ def test_entry_proposal_vote(mocker):
     )
     mocker.patch(
         "app.services.proposal_vote.entry_proposal_vote_service.inosapo_ft.transfer",
+    )
+    mocker.patch(
+        "app.services.proposal_vote.entry_proposal_vote_service.proposal_vote.vote",
     )
     proposal_votes_store.delete_proposal_vote(test_proposal_id, test_token_id)
 
@@ -118,3 +122,37 @@ def test_fetch_proposal_vote_not_voted(mocker):
     assert actual.is_proposer == False
     assert actual.voted == False
     assert actual.vote_content is None
+
+
+@pytest.mark.skipif(
+    True,
+    reason="E2E用途,Mintを実行するため普段はコメントアウト,同じ提案に２回投稿できないのでtokenIdを更新しないと失敗する",
+)
+def test_entry_proposal_vote_run_contract(mocker):
+    test_entry_proposal(mocker)
+    test_vote_user_id = "test_vote_user_id"
+    add_vote_user(test_vote_user_id)
+
+    # give
+    test_proposal_vote_id = "test_proposal_vote_id"
+    test_proposal_id = "test_proposal_id"
+    test_token_id = "test_token_id"
+    mocker.patch(
+        "app.services.proposal_vote.entry_proposal_vote_service.generate_id_str",
+        return_value=test_proposal_vote_id,
+    )
+    proposal_votes_store.delete_proposal_vote(test_proposal_id, test_token_id)
+
+    response = client.post(
+        f"/proposal/{test_proposal_id}/vote",
+        headers={"Authorization": test_vote_user_id},
+        json={
+            "judgement": True,
+            "judgement_reason": "テスト",
+        },
+    )
+
+    assert response.status_code == 200
+    actual = EntryProposalVoteResponse.parse_obj(response.json())
+    assert actual.reward == 1
+    assert actual.balance == 1
