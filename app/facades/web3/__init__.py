@@ -18,8 +18,7 @@ inosapo_ft = InosapoFT(
     contract_address=config.inosapo_ft_contract_address,
 )
 
-
-# 提案用NFT
+# 投票用NFT
 proposal_vote = ProposalVoteContract(
     contract_owner=ContractOwner(config.system_wallet_private_key_path),
     provider_network_url=config.provider_network,
