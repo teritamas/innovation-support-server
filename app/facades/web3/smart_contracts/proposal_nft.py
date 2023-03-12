@@ -1,3 +1,5 @@
+from web3 import Web3
+
 from app.facades.web3.account import ContractOwner
 from app.facades.web3.smart_contracts.base_contract import BaseContract
 from app.utils.logging import logger
@@ -21,6 +23,14 @@ class ProposalNFT(BaseContract):
             contract_address,
             f"./app/assets/abi/{contract_address}.json",
             provider_network_url,
+        )
+        token_name = self.contract.functions.name().call()
+        token_symbol = self.contract.functions.symbol().call()
+        balance = self.contract.functions.balanceOf(
+            Web3.toChecksumAddress(self.contract_owner.address)
+        ).call()
+        logger.info(
+            f"Contract Name: {token_name}, Symbol: {token_symbol}, 残高: {balance}"  # NOQA
         )
 
     def owner(
