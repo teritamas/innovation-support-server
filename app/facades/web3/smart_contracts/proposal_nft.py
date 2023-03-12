@@ -32,15 +32,18 @@ class ProposalNFT(BaseContract):
         tokenId = int(logs[-1]["topics"][-1].hex().replace("0x", ""), base=16)
         return tokenId
 
-    async def mint(self, proposer_address: str, identifier: str) -> str:
+    async def mint(
+        self, proposer_address: str, identifier: str, amount: int
+    ) -> str:
         """提案NFTを発行し提案者のウォレットにNFTを紐づける
 
         Args:
             proposer_address (str): 提案者のウォレットアドレス
             identifier (str): 識別子
+            amount(int):この提案で受け取りたいトークン量
         """
-        tx = self.contract.functions.nftMint(
-            self.convert_checksum_address(proposer_address), identifier
+        tx = self.contract.functions.mintNft(
+            self.convert_checksum_address(proposer_address), identifier, amount
         ).buildTransaction(
             {
                 "nonce": self.network.eth.getTransactionCount(
@@ -52,6 +55,10 @@ class ProposalNFT(BaseContract):
         tx_result = self.execute(tx)
         tokenId = self.getTokenIdByTransactionLog(tx_result["logs"])
         return tokenId
+
+    def get_token_amount(self, tokenId):
+        """NFTに紐づく調達額を確認する"""
+        return self.contract.functions.getTokenAmount(tokenId).call()
 
     def burn(self, wallet_address: str, burn_token_amount: int):
         """トークンを消費する。トークンを消費して、福利厚生や研修プロジェクトを受けるユースケースまで実装する場合に実装する。
