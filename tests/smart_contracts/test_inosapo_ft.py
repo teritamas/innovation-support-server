@@ -58,7 +58,7 @@ async def test_inosapo_ft_transfer():
     await inosapo_ft.transfer(VOTER_ADDRESS, 10)
 
 
-@pytest.mark.skipif(False, reason="実際にMintを実行するため時間がかかり、かつテストコインを消費するため")
+@pytest.mark.skipif(True, reason="実際にMintを実行するため時間がかかり、かつテストコインを消費するため")
 @pytest.mark.asyncio
 async def test_inosapo_ft_burn():
     """利用者の所持トークンを減らすことができること"""

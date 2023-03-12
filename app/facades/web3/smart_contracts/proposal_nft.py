@@ -23,9 +23,21 @@ class ProposalNFT(BaseContract):
             provider_network_url,
         )
 
-        # 所有者でないと実行できない為
-        # if self.owner() == self.contract_owner:
-        #     RuntimeError
+    def owner(
+        self,
+    ):
+        """コントラクトの所有者を取得"""
+        return self.contract.functions.owner().call()
+
+    def name(
+        self,
+    ):
+        """コントラクトの名称を取得"""
+        return self.contract.functions.name().call()
+
+    def fetchTokenInfoByTokeId(self, tokenId: int):
+        """トークンIDからNFTのURIを取得する"""
+        return self.contract.functions.tokenURI(tokenId).call()
 
     def getTokenIdByTransactionLog(self, logs) -> int:
         """トランザクションログからTokenIdを検索する. TODO: 改善の必要あり"""
