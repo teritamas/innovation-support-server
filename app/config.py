@@ -27,6 +27,14 @@ if inosapo_ft_contract_address == "":
         f"INOSAPO_FT_CONTRACT_ADDRESS is required. {inosapo_ft_contract_address=}"
     )
     exit()
+proposal_vote_contract_address = environ.get(
+    "PROPOSAL_VOTE_CONTRACT_ADDRESS", ""
+)
+if proposal_vote_contract_address == "":
+    print(
+        f"PROPOSAL_VOTE_CONTRACT_ADDRESS is required. {proposal_vote_contract_address=}"
+    )
+    exit()
 
 """
 必要に応じて設定

@@ -1,0 +1,166 @@
+[
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "newtokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "entryProposal",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "proposalNftTokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getAgreement",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getERC20ContractAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getNftContractAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "proposalNftTokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "finalJudgement",
+        "type": "bool"
+      }
+    ],
+    "name": "judgementProposal",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "proposals",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "proposerAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "voteTotalCount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "voteAgreementCount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint8",
+        "name": "votingStatus",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "ERC20ContractAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setERC20ContractAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "nftContractAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setNftContractAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "proposalNftTokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "voterAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "judgement",
+        "type": "bool"
+      }
+    ],
+    "name": "vote",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

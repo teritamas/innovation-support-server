@@ -20,3 +20,10 @@ class ProposalVote(BaseModel):
     # コントラクトに関する設定
     # nft_uri: str = Field("", description="投票NFTのURI")
     # nft_token_id: str = Field("", description="投票NFTのトークンID")
+
+
+class ProposalVoteOnContract(BaseModel):
+    address: str = Field("", description="提案者のウォレットアドレス")
+    vote_total_count: int = Field(0, description="投票総数")
+    vote_agreement_count: int = Field(0, description="賛成の票数")
+    voting_status: int = Field(0, description="0: 投票中, 1: 承認, 2:拒否")

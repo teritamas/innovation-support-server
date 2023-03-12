@@ -1,3 +1,6 @@
+from web3 import Web3
+
+from app import config
 from app.facades.web3.account import ContractOwner
 from app.facades.web3.smart_contracts.base_contract import BaseContract
 from app.utils.logging import logger
@@ -22,6 +25,26 @@ class InosapoFT(BaseContract):
             f"./app/assets/abi/{contract_address}.json",
             provider_network_url,
         )
+        token_name = self.contract.functions.name().call()
+        token_symbol = self.contract.functions.symbol().call()
+        balance = self.contract.functions.balanceOf(
+            Web3.toChecksumAddress(self.contract_owner.address)
+        ).call()
+        logger.info(
+            f"Contract Name: {token_name}, Symbol: {token_symbol}, 残高: {balance}"  # NOQA
+        )
+
+    def owner(
+        self,
+    ):
+        """コントラクトの所有者を取得"""
+        return self.contract.functions.owner().call()
+
+    def name(
+        self,
+    ):
+        """コントラクトの名称を取得"""
+        return self.contract.functions.name().call()
 
     async def mint_deposit(self):
         tx = self.contract.functions.mintDeposit().buildTransaction(
@@ -39,6 +62,24 @@ class InosapoFT(BaseContract):
         """管理者アドレスのトークンを指定したユーザのアドレスに移管する"""
         tx = self.contract.functions.transfer(
             self.convert_checksum_address(address), amount
+        ).buildTransaction(
+            {
+                "nonce": self.network.eth.getTransactionCount(
+                    self.contract_owner.address,
+                ),
+                "from": self.contract_owner.address,  # 自身のアドレスを含める
+            }
+        )
+        tx_result = self.execute(tx)
+        logger.info(f"{tx_result=}")
+
+    async def transfer_to_vote_contract(self, amount):
+        """投票用コントラクトにデポジットを送金する"""
+        tx = self.contract.functions.transfer(
+            self.convert_checksum_address(
+                config.proposal_vote_contract_address
+            ),
+            amount,
         ).buildTransaction(
             {
                 "nonce": self.network.eth.getTransactionCount(

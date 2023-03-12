@@ -7,14 +7,21 @@ from app.facades.web3.smart_contracts.proposal_nft import ProposalNFT
 
 pytest_plugins = ("pytest_asyncio",)
 
-PROVIDER_NETWORK = "https://goerli.blockpi.network/v1/rpc/public"
-PERSONAL_NFT_ADDRESS = "0x46f14F3Dd30465Fa2AA1cA929BceFc9FeE2ad0c9"
+PROVIDER_NETWORK = config.provider_network
+PROPOSAL_NFT_ADDRESS = config.proposal_nft_contract_address
 PROPOSER_ADDRESS = "0xb872960EF2cBDecFdC64115E1C77067c16f042FB"
 
 
-def test_proposal_nft_mock_function():
-    """提案NFTのMockの関数が実行できること"""
-    proposal_nft.burn("test_address", 10)
+def test_inosapo_ft_contract_function():
+    """ネットワークに接続しトランザクションを必要としない関数を実行できること"""
+    # 動作確認用なので固定
+    proposal_nft = ProposalNFT(
+        contract_owner=ContractOwner(config.system_wallet_private_key_path),
+        provider_network_url=PROVIDER_NETWORK,
+        contract_address=PROPOSAL_NFT_ADDRESS,
+    )
+    owner: str = proposal_nft.owner()
+    assert owner == "0x35b1C30648C4c486152EF1AD61A7868CF14cF894"
 
 
 @pytest.mark.skipif(True, reason="実際にMintを実行するため時間がかかり、かつテストコインを消費するため")
@@ -22,19 +29,24 @@ def test_proposal_nft_mock_function():
 async def test_proposal_contract_function():
     """ネットワークに接続しサンプルのコントラクトを実行できること"""
     # 動作確認用なので固定
-    test_identifier = "abcdefg"
+    test_identifier = "test_abcdefg"
+    test_token_amount = 10
     proposal_nft = ProposalNFT(
         contract_owner=ContractOwner(config.system_wallet_private_key_path),
         provider_network_url=PROVIDER_NETWORK,
-        contract_address=PERSONAL_NFT_ADDRESS,
+        contract_address=PROPOSAL_NFT_ADDRESS,
     )
     owner: str = proposal_nft.owner()
+    assert owner == "0x35b1C30648C4c486152EF1AD61A7868CF14cF894"
 
     tokenId = await proposal_nft.mint(
         proposer_address=PROPOSER_ADDRESS,  # 決め打ちで自身のMetamask
         identifier=test_identifier,
+        amount=test_token_amount,
     )
 
     assert type(tokenId) == int
     tokenIdentifier = proposal_nft.fetchTokenInfoByTokeId(tokenId=tokenId)
     assert test_identifier == tokenIdentifier
+    tokenAmount = proposal_nft.get_token_amount(tokenId=tokenId)
+    assert test_token_amount == tokenAmount
