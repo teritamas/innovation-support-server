@@ -28,6 +28,12 @@ def test_entry_proposal(mocker):
         "app.services.proposal.entry_proposal_service.proposal_nft.mint",
         return_value=test_token_id,
     )
+    mocker.patch(
+        "app.services.proposal.entry_proposal_service.inosapo_ft.transfer_to_vote_contract",
+    )
+    mocker.patch(
+        "app.services.proposal.entry_proposal_service.proposal_vote.entry_proposal",
+    )
     try:
         proposals_store.delete_proposal(test_proposal_id)
         proposal_pdf.delete(
@@ -95,6 +101,59 @@ def test_entry_proposal_slack_notification(mocker):
         "other_contents": "その他コメント",
         "tags": [],
         "slack_notification_channels": ["general", "for_develop"],
+    }
+    request_json = json.dumps(request)
+    response = client.post(
+        "/proposal",
+        headers={"Authorization": test_user_id},
+        files={
+            "request": (
+                None,
+                request_json,
+            ),
+            "file": open(f"./tests/assets/{test_file_name}", "rb"),
+        },
+    )
+    assert response.status_code == 200
+    actual = EntryProposalResponse.parse_obj(response.json())
+    assert actual.proposal_id == test_proposal_id
+
+
+@pytest.mark.skipif(True, reason="E2E用途,Mintを実行するためふだんは")
+def test_entry_proposal_run_contract(mocker):
+    """提案を追加する"""
+    test_signup_not_exists(mocker=mocker)
+    test_proposal_id = "test_proposal_id"
+    test_user_id = "test_user_id"
+    test_file_name = "sample.pdf"
+    test_token_id = 1
+    mocker.patch(
+        "app.services.proposal.entry_proposal_service.generate_id_str",
+        return_value=test_proposal_id,
+    )
+    try:
+        proposals_store.delete_proposal(test_proposal_id)
+        proposal_pdf.delete(
+            build_nft_uri(
+                user_id=test_user_id,
+                proposal_id=test_proposal_id,
+                filename=test_file_name,
+            )
+        )
+        proposal_thumbnail_image.delete(
+            destination_blob_name=f"{test_proposal_id}.jpeg",
+        )
+    except:
+        pass
+
+    request = {
+        "title": "pytestの実行サンプル",
+        "description": "テストで挿入されたデータです",
+        "target_amount": 1000,
+        "is_recruiting_teammates": False,
+        "other_contents": "その他コメント",
+        "proposal_phase": "middle",
+        "tags": [],
     }
     request_json = json.dumps(request)
     response = client.post(

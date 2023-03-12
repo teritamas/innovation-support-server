@@ -190,9 +190,9 @@
     "name": "getTokenAmount",
     "outputs": [
       {
-        "internalType": "uint8",
+        "internalType": "uint256",
         "name": "",
-        "type": "uint8"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -235,40 +235,12 @@
         "type": "string"
       },
       {
-        "internalType": "uint8",
+        "internalType": "uint256",
         "name": "tokenAmount",
-        "type": "uint8"
+        "type": "uint256"
       }
     ],
     "name": "mintNft",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "proposerAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "tokenUri",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "tokenAmount",
-        "type": "uint8"
-      }
-    ],
-    "name": "mintNftFromTokenId",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -402,9 +374,9 @@
         "type": "uint256"
       },
       {
-        "internalType": "uint8",
+        "internalType": "uint256",
         "name": "tokenAmount",
-        "type": "uint8"
+        "type": "uint256"
       }
     ],
     "name": "setTokenAmount",

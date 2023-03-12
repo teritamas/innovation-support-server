@@ -36,7 +36,7 @@ class ProposalVoteContract(BaseContract):
         # 提案NFTを設定
         if (
             self.contract.functions.getNftContractAddress().call()
-            == "0x0000000000000000000000000000000000000000"
+            != proposal_nft_contract_address
         ):
             logger.info(f"Set ProposalNFT address")
             tx = self.contract.functions.setNftContractAddress(
@@ -55,7 +55,7 @@ class ProposalVoteContract(BaseContract):
         # トークン発行用コントラクトを設定
         if (
             self.contract.functions.getERC20ContractAddress().call()
-            == "0x0000000000000000000000000000000000000000"
+            != inosapo_ft_contract_address
         ):
             logger.info(f"Set InosapoFT address")
             tx = self.contract.functions.setERC20ContractAddress(
