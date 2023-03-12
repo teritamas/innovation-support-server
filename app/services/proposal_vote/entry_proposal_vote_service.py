@@ -36,6 +36,7 @@ async def execute(
     mint_token_amount = int(10 * score)
 
     logger.info(f"トークン発行. {user_id=}, {mint_token_amount=}")
+    await inosapo_ft.transfer(user.wallet_address, amount=mint_token_amount)
 
     # TODO: スマコンでトークンの送金までできるようにする。
     await proposal_vote.vote(
