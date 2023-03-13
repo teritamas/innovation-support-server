@@ -1,7 +1,8 @@
 from typing import List
 
 from app.facades.database import fire_store
-from app.schemas.proposal.domain import Proposal
+from app.schemas.proposal.domain import Proposal, ProposalStatus
+from app.utils.common import now
 
 COLLECTION_PREFIX = "proposals"
 
@@ -25,6 +26,24 @@ def fetch_proposal(id: str) -> Proposal:
     return Proposal.parse_obj(
         fire_store.fetch(collection=COLLECTION_PREFIX, id=id)
     )
+
+
+def update_proposal(id: str, status: ProposalStatus) -> Proposal:
+    """提案の投票ステータスを更新する
+
+    Args:
+        id (str): 更新対象のID
+        status (ProposalStatus): 更新後のステータス
+
+    Returns:
+        Proposal: 更新後の提案
+    """
+    proposal = fetch_proposal(id)
+    proposal.proposal_status = status
+    proposal.updated_at = now()
+    add_proposal(id=id, content=proposal)
+
+    return proposal
 
 
 def fetch_proposals_by_user_id(
