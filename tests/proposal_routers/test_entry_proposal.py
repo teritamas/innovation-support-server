@@ -55,7 +55,7 @@ def test_entry_proposal(mocker):
         "target_amount": 1000,
         "is_recruiting_teammates": False,
         "other_contents": "その他コメント",
-        "proposal_phase": "middle",
+        "proposal_phase": "seed",
         "tags": [],
     }
     request_json = json.dumps(request)
@@ -152,7 +152,7 @@ def test_entry_proposal_run_contract(mocker):
         "target_amount": 1000,
         "is_recruiting_teammates": False,
         "other_contents": "その他コメント",
-        "proposal_phase": "middle",
+        "proposal_phase": "seed",
         "tags": [],
     }
     request_json = json.dumps(request)

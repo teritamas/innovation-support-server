@@ -2,7 +2,12 @@ from fastapi.testclient import TestClient
 
 from app.facades.database import proposals_store
 from app.main import app
-from app.schemas.proposal.domain import Proposal, ProposalStatus
+from app.schemas.proposal.domain import (
+    Proposal,
+    ProposalOwnType,
+    ProposalStatus,
+)
+from app.schemas.proposal.dto import ListProposalDto
 
 client = TestClient(app)
 
@@ -38,7 +43,9 @@ def test_find_proposal_title_query():
     assert response.status_code == 200
     actual = response.json()
     assert type(actual) == dict
-    actual_proposals = Proposal.parse_obj(actual.get("proposals")[0])  # 一つしかない
+    actual_proposals = ListProposalDto.parse_obj(
+        actual.get("proposals")[0]
+    )  # 一つしかない
     assert actual_proposals.title == f"title_{str(test_index)}"
     assert actual_proposals.description == f"description_{str(test_index)}"
     _delete_proposal(proposal_count)
@@ -58,7 +65,9 @@ def test_find_proposal_description_query():
     assert response.status_code == 200
     actual = response.json()
     assert type(actual) == dict
-    actual_proposals = Proposal.parse_obj(actual.get("proposals")[0])  # 一つしかない
+    actual_proposals = ListProposalDto.parse_obj(
+        actual.get("proposals")[0]
+    )  # 一つしかない
     assert actual_proposals.title == f"title_{str(test_index)}"
     assert actual_proposals.description == f"description_{str(test_index)}"
     _delete_proposal(proposal_count)
@@ -119,9 +128,34 @@ def test_find_proposal_status_and_title_query():
     assert response.status_code == 200
     actual = response.json()
     assert type(actual) == dict
-    actual_proposals = Proposal.parse_obj(actual.get("proposals")[0])  # 一つしかない
+    actual_proposals = ListProposalDto.parse_obj(
+        actual.get("proposals")[0]
+    )  # 一つしかない
     assert actual_proposals.title == f"title_{str(test_index)}"
     assert actual_proposals.description == f"description_{str(test_index)}"
+
+    _delete_proposal(proposal_count)
+
+
+def test_find_proposal_user_id():
+    """user_idを指定して、提案に対するそのユーザのステータスを返すこと"""
+    test_user_id = "test_user_id"
+    proposal_count = 3
+    _add_proposal(proposal_count, ProposalStatus.ACCEPT)
+
+    # give
+    response = client.get(
+        f"/proposal?user_id={test_user_id}&title=title_",
+        headers={"Authorization": test_user_id},
+    )
+
+    assert response.status_code == 200
+    actual = response.json()
+    assert type(actual) == dict
+
+    for d in actual.get("proposals"):
+        actual_proposal = ListProposalDto.parse_obj(d)  # 一つしかない
+        assert actual_proposal.proposal_own_type == ProposalOwnType.UNVOTED
 
     _delete_proposal(proposal_count)
 

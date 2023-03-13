@@ -91,3 +91,10 @@ class JudgementStatusDto(BaseModel):
     fill_min_agreement_count: bool = Field(
         False, description="最低賛同者数を超えている場合はTrue"
     )
+
+
+class ProposalOwnType(str, Enum):
+    UNKNOWN = "unknown"  # ユーザIDを取得できないため不明
+    VOTED = "voted"  # 自身の提案でなく投票済みのもの
+    UNVOTED = "unvoted"  # 自身の提案でなく投票済みでないもの
+    OWNER = "owner"  # 提案の発案者
