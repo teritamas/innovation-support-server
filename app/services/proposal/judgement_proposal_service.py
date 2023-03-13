@@ -53,9 +53,12 @@ async def execute(proposal_id: str) -> JudgementStatusDto:
     )
 
     # コントラクトをアップデートする
-    await proposal_vote.judgement_proposal(
-        tokenId=int(proposal.nft_token_id), judgement=judgement_result
-    )
+    try:
+        await proposal_vote.judgement_proposal(
+            tokenId=int(proposal.nft_token_id), judgement=judgement_result
+        )
+    except Exception as e:
+        logger.warning(f"コントラクト上の承認処理で失敗しました。{e=}")
 
     # DBの内容を更新する
     proposals_store.update_proposal(
