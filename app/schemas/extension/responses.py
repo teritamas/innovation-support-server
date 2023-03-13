@@ -1,6 +1,7 @@
-from pydantic import BaseModel, Field
+from pydantic import Field
+
+from app.schemas.extension.dto import VerifyVoteEnrichmentDto
 
 
-class VerifyVoteEnrichmentResponse(BaseModel):
+class VerifyVoteEnrichmentResponse(VerifyVoteEnrichmentDto):
     judgement_reason: str = Field("", description="入力された投票理由")
-    score: float = Field(0, description="スコア")
