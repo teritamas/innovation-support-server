@@ -1,8 +1,9 @@
 from fastapi import APIRouter
 
-from app.facades.nlp import rule_base
+from app.schemas.extension.dto import VerifyVoteEnrichmentDto
 from app.schemas.extension.requests import VerifyVoteEnrichmentRequest
 from app.schemas.extension.responses import VerifyVoteEnrichmentResponse
+from app.services.extension import calculation_judgement_reason_service
 
 extension_router = APIRouter(prefix="/extension", tags=["extension"])
 
@@ -15,7 +16,10 @@ extension_router = APIRouter(prefix="/extension", tags=["extension"])
 def calculation_judgement_reason(
     request: VerifyVoteEnrichmentRequest,
 ):
-    score = rule_base.calculation_judgement_reason(request.judgement_reason)
-    return VerifyVoteEnrichmentResponse(
-        judgement_reason=request.judgement_reason, score=score
+    dto: VerifyVoteEnrichmentDto = (
+        calculation_judgement_reason_service.execute(request.judgement_reason)
     )
+
+    response = VerifyVoteEnrichmentResponse.parse_obj(dto.dict())
+    response.judgement_reason = request.judgement_reason
+    return response

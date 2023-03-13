@@ -38,11 +38,16 @@ async def execute(
     logger.info(f"トークン発行. {user_id=}, {mint_token_amount=}")
     await inosapo_ft.transfer(user.wallet_address, amount=mint_token_amount)
 
-    # TODO: スマコンでトークンの送金までできるようにする。
-    await proposal_vote.vote(
-        int(proposal.nft_token_id), user.wallet_address, request.judgement
-    )
-    await inosapo_ft.transfer(user.wallet_address, amount=mint_token_amount)
+    try:
+        # TODO: スマコンでトークンの送金までできるようにする。
+        await proposal_vote.vote(
+            int(proposal.nft_token_id), user.wallet_address, request.judgement
+        )
+        await inosapo_ft.transfer(
+            user.wallet_address, amount=mint_token_amount
+        )
+    except Exception as e:
+        logger.warn(f"コントラクトの実行処理で失敗しました.投票処理は完了させます.  {e=}")
 
     save_db(user_id, proposal_id, request, "", mint_token_amount)
     balance = users_store.add_token_amount(

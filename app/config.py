@@ -36,6 +36,7 @@ if proposal_vote_contract_address == "":
     )
     exit()
 
+
 """
 必要に応じて設定
 """
@@ -58,6 +59,10 @@ frontend_url = environ.get("FRONTEND_URL", "http://0.0.0.0:3000")
 default_slack_incoming_webhooks_url = environ.get(
     "DEFAULT_SLACK_INCOMING_WEBHOOKS_URL", ""
 )
+
+# COTOHAAPIの接続に必要な情報.　設定されていない場合は利用されない
+cotoha_client_id = environ.get("COTOHA_CLIENT_ID", "")
+cotoha_client_secret = environ.get("COTOHA_CLIENT_SECRET", "")
 
 # バッチの更新速度
 batch_interval_minute = int(environ.get("BATCH_INTERVAL_MINUTE", 1))
