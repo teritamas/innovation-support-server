@@ -11,7 +11,7 @@ from tests.proposal_routers.test_entry_proposal import test_entry_proposal
 
 VOTER_COUNT = 200
 INSERT_DUMMY = True
-TEST_SKIP = False  # 試験を実行する場合、Trueにする
+TEST_SKIP = True  # 試験を実行する場合、Falseにする
 
 
 @pytest.mark.skipif(TEST_SKIP, reason="ダミーユーザを挿入する処理でFireStoreの書き込みが急増するため")
