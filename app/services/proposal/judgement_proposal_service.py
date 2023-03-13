@@ -77,7 +77,7 @@ async def execute(proposal_id: str) -> JudgementStatusDto:
 def _past_limit_date(start_datetime: datetime, limit_date: int) -> bool:
     """現在の日付が投票締切を超えている場合trueを返す"""
     limit_datetime = start_datetime + timedelta(days=limit_date)
-    return limit_datetime < now()
+    return limit_datetime <= now()
 
 
 def _check_fill_min_voter_count(

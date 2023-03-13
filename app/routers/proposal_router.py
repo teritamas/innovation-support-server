@@ -151,6 +151,7 @@ def fetch_proposal_vote_status(
     response_model=FindProposalResponse,
 )
 def find_proposal(
+    user_id: str | None = None,
     status: str | None = None,
     title: str | None = None,
     description: str | None = None,
@@ -158,6 +159,7 @@ def find_proposal(
 ):
     # TODO: タグで絞り込みは未実施
     proposals = find_proposal_service.execute(
+        user_id=user_id,
         proposal_status=status,
         title=title,
         description=description,

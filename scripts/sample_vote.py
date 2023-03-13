@@ -1,10 +1,15 @@
 import argparse
 import os
 import sys
+from datetime import timedelta
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
-from app.facades.database import proposal_votes_store, users_store
+from app.facades.database import (
+    proposal_votes_store,
+    proposals_store,
+    users_store,
+)
 from app.schemas.proposal_vote.domain import ProposalVote
 from app.schemas.user.domain import User
 from app.utils.common import now
@@ -41,7 +46,22 @@ def add_vote(
     )
 
 
-def main(proposal_id: str, voter_count: int, agreement_rate: float):
+def complete_vote(proposal_id: str):
+    """投票を終了させる"""
+
+    proposal = proposals_store.fetch_proposal(proposal_id)
+    # 作成日を１年前にすることで、すべての投票期間を必ず超えるので、投票が終了する。
+    proposal.created_at = now() - timedelta(days=365)
+
+    proposals_store.add_proposal(id=proposal_id, content=proposal)
+
+
+def main(
+    proposal_id: str,
+    voter_count: int,
+    agreement_rate: float,
+    is_complete_vote: bool = True,
+):
     agreement_voter_count = int(agreement_rate * voter_count)
     disagreement_voter_count = voter_count - agreement_voter_count
     print(
@@ -61,6 +81,10 @@ def main(proposal_id: str, voter_count: int, agreement_rate: float):
         add_vote_user(user_id=user_id)
         add_vote(proposal_id=proposal_id, user_id=user_id, judgement=False)
         print(f"Negative User Insert: {user_id}")
+
+    if is_complete_vote:
+        print(f"Force End of vote: {proposal_id}")
+        complete_vote(proposal_id)
 
 
 if __name__ == "__main__":
