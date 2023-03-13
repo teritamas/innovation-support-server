@@ -127,9 +127,6 @@ async def test_entry_judgement_proposal_voting(mocker):
     assert ProposalStatus.VOTING == proposal.proposal_status
 
 
-TEST_SKIP_CONTRACT = False
-
-
 @pytest.mark.skipif(TEST_SKIP_CONTRACT, reason="コントラクトを実行する処理のため")
 @pytest.mark.asyncio
 async def test_entry_judgement_proposal_accept_run_contract(mocker):

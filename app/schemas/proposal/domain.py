@@ -67,7 +67,7 @@ class Proposal(BaseModel):
 
     # コントラクトに関する設定
     nft_uri: str = Field("", description="提案NFTのURI")
-    nft_token_id: str = Field("", description="提案NFTのトークンID")
+    nft_token_id: int = Field(0, description="提案NFTのトークンID")
 
     # 投票
     proposal_fundraising_condition: ProposalFundraisingCondition | None = (
