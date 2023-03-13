@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from typing import List
 
 from app.facades.database import proposals_store
+from app.facades.web3 import proposal_vote
 from app.schemas.proposal.domain import (
     JudgementStatusDto,
     Proposal,
@@ -12,7 +13,7 @@ from app.schemas.proposal_vote.domain import ProposalVote
 from app.utils.common import now
 
 
-def execute(proposal_id: str) -> JudgementStatusDto:
+async def execute(proposal_id: str) -> JudgementStatusDto:
     """提案の状態を確認し、可決しているかどうかを確認する。"""
 
     proposal: Proposal = proposals_store.fetch_proposal(id=proposal_id)
@@ -46,10 +47,14 @@ def execute(proposal_id: str) -> JudgementStatusDto:
         int(condition.min_voter_count * condition.min_agreement_count),
     )
 
+    judgement_result = fill_min_voter_count and fill_min_agreement_count
     result_proposal_status = (
-        ProposalStatus.ACCEPT
-        if fill_min_voter_count and fill_min_agreement_count
-        else ProposalStatus.REJECT
+        ProposalStatus.ACCEPT if judgement_result else ProposalStatus.REJECT
+    )
+
+    # コントラクトをアップデートする
+    await proposal_vote.judgement_proposal(
+        tokenId=int(proposal.nft_token_id), judgement=judgement_result
     )
 
     # DBの内容を更新する
