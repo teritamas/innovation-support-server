@@ -9,6 +9,7 @@ client = TestClient(app)
 
 def test_find_proposal():
     """提案内容の一覧を取得できること"""
+
     test_user_id = "test_user_id"
     # give
     response = client.get(
@@ -66,7 +67,9 @@ def test_find_proposal_description_query():
 def test_find_proposal_status_query():
     """ステータスで検索して提案内容の一覧を取得できること"""
     test_user_id = "test_user_id"
+    original_count = _base_count(test_user_id, ProposalStatus.ACCEPT)
     proposal_count = 3
+
     _add_proposal(proposal_count, ProposalStatus.ACCEPT)
     test_index = 1
     # give
@@ -78,7 +81,7 @@ def test_find_proposal_status_query():
     assert response.status_code == 200
     actual = response.json()
     assert type(actual) == dict
-    assert len(actual.get("proposals")) == proposal_count
+    assert len(actual.get("proposals")) == proposal_count + original_count
     _delete_proposal(proposal_count)
 
 
@@ -142,3 +145,11 @@ def _delete_proposal(index):
     for i in range(index):
         proposal_id = f"proposal_{i}"
         proposals_store.delete_proposal(proposal_id)
+
+
+def _base_count(test_user_id: str, status: ProposalStatus):
+    base = client.get(
+        f"/proposal?status={status}",
+        headers={"Authorization": test_user_id},
+    ).json()
+    return len(base.get("proposals"))
