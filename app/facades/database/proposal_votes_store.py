@@ -1,7 +1,9 @@
 from typing import List
 
 from app.facades.database import fire_store, proposals_store
+from app.schemas.proposal.domain import Proposal
 from app.schemas.proposal_vote.domain import ProposalVote
+from app.schemas.user.dto import UserProposalVote
 
 COLLECTION_PREFIX = "proposals"
 
@@ -63,7 +65,7 @@ def fetch_proposal_vote_by_proposal_id(
 
 def fetch_proposal_vote_by_user_id(
     user_id: str,
-) -> List[ProposalVote]:
+) -> List[UserProposalVote]:
     """ユーザIdから投票結果情報を検索する。
 
     Args:
@@ -74,13 +76,20 @@ def fetch_proposal_vote_by_user_id(
     """
     proposals_col = fire_store().collection(COLLECTION_PREFIX).stream()
 
-    proposal_votes: List[ProposalVote] = []
+    proposal_votes: List[UserProposalVote] = []
 
     for proposal in proposals_col:
+        p = Proposal.parse_obj(proposal.to_dict())
         user_vote = fetch_proposal_vote_by_proposal_id_and_user_id(
             proposal_id=proposal.id, user_id=user_id
         )
-        proposal_votes.extend(user_vote)
+        if user_vote == []:
+            continue
+
+        user_proposal_vote = UserProposalVote.parse_obj(user_vote[0].dict())
+        user_proposal_vote.proposal_id = p.proposal_id
+        user_proposal_vote.title = p.title
+        proposal_votes.append(user_proposal_vote)
     return proposal_votes
 
 
