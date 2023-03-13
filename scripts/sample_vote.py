@@ -41,11 +41,7 @@ def add_vote(
     )
 
 
-def main(args):
-    proposal_id = args.proposal_id
-    voter_count = args.voter_count
-    agreement_rate = args.agreement_rate
-
+def main(proposal_id: str, voter_count: int, agreement_rate: float):
     agreement_voter_count = int(agreement_rate * voter_count)
     disagreement_voter_count = voter_count - agreement_voter_count
     print(
@@ -60,7 +56,7 @@ def main(args):
         print(f"Positive User Insert: {user_id}")
 
     # 否決の投票を行う
-    for disagreement_voter_count in range(agreement_voter_count):
+    for disagreement_voter_count in range(disagreement_voter_count):
         user_id: str = f"negative_user_{disagreement_voter_count}"
         add_vote_user(user_id=user_id)
         add_vote(proposal_id=proposal_id, user_id=user_id, judgement=False)
@@ -76,4 +72,8 @@ if __name__ == "__main__":
         "--agreement_rate", default=0.7, type=float, help="賛成の割合"
     )
     args = parser.parse_args()
-    main(args)
+    main(
+        proposal_id=args.proposal_id,
+        voter_count=args.voter_count,
+        agreement_rate=args.agreement_rate,
+    )

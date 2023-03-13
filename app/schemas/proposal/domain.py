@@ -24,9 +24,6 @@ class ProposalStatus(str, Enum):
     ACCEPT = "accept"  # 可決
 
 
-from pydantic.dataclasses import dataclass
-
-
 class ProposalFundraisingCondition(BaseModel):
     """資金調達の条件"""
 
@@ -70,7 +67,7 @@ class Proposal(BaseModel):
 
     # コントラクトに関する設定
     nft_uri: str = Field("", description="提案NFTのURI")
-    nft_token_id: str = Field("", description="提案NFTのトークンID")
+    nft_token_id: int = Field(0, description="提案NFTのトークンID")
 
     # 投票
     proposal_fundraising_condition: ProposalFundraisingCondition | None = (
@@ -80,3 +77,17 @@ class Proposal(BaseModel):
 
     # その他
     thumbnail_filename: str = Field("", description="サムネイル画像のファイルパス")
+
+
+class JudgementStatusDto(BaseModel):
+    proposal_status: ProposalStatus = Field(
+        ProposalStatus.VOTING, description="投票状態"
+    )
+    is_limit: bool = Field(
+        False,
+        description="投票締切を超えた場合はTrue。ここがFalseの時、fill_min_voter_countとfill_min_agreement_countは必ずFalseになる.",
+    )
+    fill_min_voter_count: bool = Field(False, description="最低得票数を超えている場合はTrue")
+    fill_min_agreement_count: bool = Field(
+        False, description="最低賛同者数を超えている場合はTrue"
+    )
