@@ -30,4 +30,7 @@
   "python.linting.mypyEnabled": false,
   "python.testing.autoTestDiscoverOnSaveEnabled": false,
   "python.languageServer": "Pylance",
+  "cSpell.words": [
+    "INOSAPO"
+  ],
 }

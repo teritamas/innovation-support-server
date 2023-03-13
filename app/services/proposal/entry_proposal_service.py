@@ -93,6 +93,7 @@ async def execute(
 
 
 def build_condition(phase: ProposalPhase) -> ProposalFundraisingCondition:
+    """提案フェーズから提案が可決する条件を設定する"""
     if phase == ProposalPhase.SEED:
         limit_date = 7
         procurement_token_amount = 50  # 500千円
