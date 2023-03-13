@@ -5,7 +5,6 @@ from typing import List
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
-
 from app.schemas.proposal.domain import (
     JudgementStatusDto,
     Proposal,
