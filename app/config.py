@@ -58,3 +58,6 @@ frontend_url = environ.get("FRONTEND_URL", "http://0.0.0.0:3000")
 default_slack_incoming_webhooks_url = environ.get(
     "DEFAULT_SLACK_INCOMING_WEBHOOKS_URL", ""
 )
+
+# バッチの更新速度
+batch_interval_minute = int(environ.get("BATCH_INTERVAL_MINUTE", 1))

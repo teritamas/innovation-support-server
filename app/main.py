@@ -1,9 +1,12 @@
 import uvicorn
-from fastapi import FastAPI, Request, status
+from fastapi import BackgroundTasks, FastAPI, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi_utils.tasks import repeat_every
+
+from app import cli, config
 
 from .routers.account_router import account_router
 from .routers.extension_router import extension_router
@@ -37,7 +40,6 @@ def get_application() -> FastAPI:
     app.include_router(timeline_router)
     app.include_router(prize_router)
     app.include_router(extension_router)
-
     return app
 
 
@@ -52,6 +54,12 @@ async def validation_exception_handler(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
     )
+
+
+@app.on_event("startup")
+@repeat_every(seconds=60 * config.batch_interval_minute)  # 5 min
+async def remove_expired_tokens_task() -> None:
+    await cli.main()
 
 
 if __name__ == "__main__":

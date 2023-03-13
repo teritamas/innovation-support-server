@@ -9,3 +9,13 @@ services:
     volumes:
       - ./key:/key
       - .env:/.env
+
+  innosupo-batch:
+    build: .
+    container_name: innosupo_batch
+    ports:
+      - "8000:8080"
+    command: python app/cli.py
+    volumes:
+      - ./key:/key
+      - .env:/.env

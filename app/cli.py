@@ -21,22 +21,22 @@ async def main():
     voting_proposals: List[Proposal] = find_proposal_service.execute(
         proposal_status=ProposalStatus.VOTING
     )
-    # print(f"Target lists. {voting_proposals=}")
+    logger.info(f"Target lists. {voting_proposals=}")
 
     for proposal in voting_proposals:
-        print(f"{'=' * 100}")
+        logger.info(f"{'=' * 100}")
         try:
             status: JudgementStatusDto = (
                 await judgement_proposal_service.execute(
                     proposal_id=proposal.proposal_id
                 )
             )
-            print(
+            logger.info(
                 f"Check Complete! {proposal.title=}, {status.proposal_status=}"
             )
 
         except Exception as e:
-            print(f"This id missed. {proposal.proposal_id=}. {e=}")
+            logger.warn(f"This id missed. {proposal.proposal_id=}. {e=}")
 
 
 if __name__ == "__main__":
