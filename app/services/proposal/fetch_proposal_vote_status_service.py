@@ -1,7 +1,7 @@
 from typing import List
 
 from app.facades.database import proposal_votes_store, proposals_store
-from app.schemas.proposal.domain import Proposal
+from app.schemas.proposal.domain import Proposal, ProposalStatus
 from app.schemas.proposal.dto import FetchProposalVoteDto
 from app.schemas.proposal_vote.domain import ProposalVote
 from app.utils.logging import logger
@@ -18,7 +18,7 @@ def execute(user_id: str, proposal_id: str) -> FetchProposalVoteDto | None:
 
     positive_proposal_votes: List[ProposalVote] = []
     negative_proposal_votes: List[ProposalVote] = []
-    logger.error(proposal_votes)
+
     for proposal_vote in proposal_votes:
         if proposal_vote.judgement:
             positive_proposal_votes.append(proposal_vote)
@@ -35,7 +35,11 @@ def _is_status_accessible_user(user_id: str, proposal_id: str) -> bool:
     """ユーザが、投票ステータスにアクセス可能な状態かを判別する。"""
 
     proposal: Proposal = proposals_store.fetch_proposal(proposal_id)
-    logger.info(f"Proposal. {proposal=}, {user_id=}")
+    if (
+        proposal.proposal_status != ProposalStatus.VOTING
+    ):  # 投票中でない場合は条件位かかわらずアクセス可能
+        return True
+
     if proposal.user_id == user_id:  # 提案者の場合、アクセス可能
         logger.info("Access User is Proposer")
         return True

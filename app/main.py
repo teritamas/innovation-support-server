@@ -15,6 +15,7 @@ from .routers.proposal_router import proposal_router
 from .routers.proposal_vote_router import proposal_vote_router
 from .routers.timeline_router import timeline_router
 from .routers.user_router import user_router
+from .routers.web3_router import web3_router
 
 
 def get_application() -> FastAPI:
@@ -40,6 +41,7 @@ def get_application() -> FastAPI:
     app.include_router(timeline_router)
     app.include_router(prize_router)
     app.include_router(extension_router)
+    app.include_router(web3_router)
     return app
 
 
