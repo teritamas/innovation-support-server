@@ -64,6 +64,5 @@ default_slack_incoming_webhooks_url = environ.get(
 cotoha_client_id = environ.get("COTOHA_CLIENT_ID", "")
 cotoha_client_secret = environ.get("COTOHA_CLIENT_SECRET", "")
 
-
 # バッチの更新速度
 batch_interval_minute = int(environ.get("BATCH_INTERVAL_MINUTE", 1))
