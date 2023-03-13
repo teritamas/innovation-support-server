@@ -18,7 +18,7 @@ def execute(user_id: str, proposal_id: str) -> FetchProposalVoteDto | None:
 
     positive_proposal_votes: List[ProposalVote] = []
     negative_proposal_votes: List[ProposalVote] = []
-    logger.error("hoge")
+
     for proposal_vote in proposal_votes:
         if proposal_vote.judgement:
             positive_proposal_votes.append(proposal_vote)
