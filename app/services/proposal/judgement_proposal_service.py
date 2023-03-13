@@ -11,6 +11,7 @@ from app.schemas.proposal.domain import (
 )
 from app.schemas.proposal_vote.domain import ProposalVote
 from app.utils.common import now
+from app.utils.logging import logger
 
 
 async def execute(proposal_id: str) -> JudgementStatusDto:
