@@ -2,12 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.schemas.auth.domain import AuthorizedClientSchema
 from app.schemas.user.requests import EntryUserRequest
-from app.schemas.user.response import DetailUserResponse, EntryUserResponse
-from app.services.user import (
-    detail_user_by_wallet_address_service,
-    detail_user_service,
-    entry_user_service,
-)
+from app.schemas.user.response import DetailUserResponse
+from app.services.user import detail_user_service
 from app.utils.authorization import authenticate_key
 
 user_router = APIRouter(prefix="", tags=["user"])
