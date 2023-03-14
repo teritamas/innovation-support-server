@@ -11,6 +11,7 @@ PROVIDER_NETWORK = config.provider_network
 PROPOSAL_NFT_ADDRESS = config.proposal_nft_contract_address
 VOTER_ADDRESS = "0xb872960EF2cBDecFdC64115E1C77067c16f042FB"
 TEST_NFT_ID = 1  # テスト用でほぼ必ず存在してるため
+TEST_SKIP = True
 
 # 提案用NFT
 proposal_vote = ProposalVoteContract(
@@ -22,16 +23,14 @@ proposal_vote = ProposalVoteContract(
 )
 
 
-@pytest.mark.skipif(True, reason="実際にMintを実行するため時間がかかり、かつテストコインを消費するため")
-@pytest.mark.asyncio
-async def test_proposal_vote_entry():
+@pytest.mark.skipif(TEST_SKIP, reason="実際にMintを実行するため時間がかかり、かつテストコインを消費するため")
+def test_proposal_vote_entry():
     """提案内容の投票を開始できること"""
     proposal_vote.entry_proposal(TEST_NFT_ID)
 
 
-@pytest.mark.skipif(True, reason="実際にMintを実行するため時間がかかり、かつテストコインを消費するため")
-@pytest.mark.asyncio
-async def test_proposal_vote_vote():
+@pytest.mark.skipif(TEST_SKIP, reason="実際にMintを実行するため時間がかかり、かつテストコインを消費するため")
+def test_proposal_vote_vote():
     """提案内容に対して投票ができること"""
     proposal_vote.vote(TEST_NFT_ID, VOTER_ADDRESS, True)
 
