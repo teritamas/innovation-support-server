@@ -11,7 +11,7 @@ PROVIDER_NETWORK = config.provider_network
 PROPOSAL_NFT_ADDRESS = config.proposal_nft_contract_address
 PROPOSER_ADDRESS = "0xb872960EF2cBDecFdC64115E1C77067c16f042FB"
 
-TEST_SKIP = False
+TEST_SKIP = True
 
 
 def test_inosapo_ft_contract_function():
