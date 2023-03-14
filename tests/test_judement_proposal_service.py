@@ -10,13 +10,13 @@ from scripts import sample_vote
 from tests.proposal_routers.test_entry_proposal import test_entry_proposal
 
 VOTER_COUNT = 50
-TEST_SKIP = False  # 試験を実行する場合、Falseにする
+TEST_SKIP = True  # 試験を実行する場合、Falseにする
 TEST_SKIP_CONTRACT = True  # スマートコントラクトの実行をする試験
 
 
 @pytest.mark.skipif(TEST_SKIP, reason="ダミーユーザを挿入する処理でFireStoreの書き込みが急増するため")
 @pytest.mark.asyncio
-async def test_entry_judgement_proposal_accept(mocker):
+def test_entry_judgement_proposal_accept(mocker):
     """条件を満たしている提案のステータスが承認状態であること"""
     # give
     test_proposal_id = "test_proposal_id"
@@ -36,7 +36,7 @@ async def test_entry_judgement_proposal_accept(mocker):
         "app.services.proposal.entry_proposal_service.proposal_vote.judgement_proposal",
     )
     # when
-    actual: JudgementStatusDto = await judgement_proposal_service.execute(
+    actual: JudgementStatusDto = judgement_proposal_service.execute(
         proposal_id=test_proposal_id
     )
 
@@ -51,8 +51,7 @@ async def test_entry_judgement_proposal_accept(mocker):
 
 
 @pytest.mark.skipif(TEST_SKIP, reason="ダミーユーザを挿入する処理でFireStoreの書き込みが急増するため")
-@pytest.mark.asyncio
-async def test_entry_judgement_proposal_reject(mocker):
+def test_entry_judgement_proposal_reject(mocker):
     """条件を満たしていない提案のステータスが棄却状態であること"""
     # give
     test_proposal_id = "test_proposal_id"
@@ -70,7 +69,7 @@ async def test_entry_judgement_proposal_reject(mocker):
         "app.services.proposal.entry_proposal_service.proposal_vote.judgement_proposal",
     )
     # when
-    actual: JudgementStatusDto = await judgement_proposal_service.execute(
+    actual: JudgementStatusDto = judgement_proposal_service.execute(
         proposal_id=test_proposal_id
     )
 
@@ -84,8 +83,7 @@ async def test_entry_judgement_proposal_reject(mocker):
     assert ProposalStatus.REJECT == proposal.proposal_status
 
 
-@pytest.mark.asyncio
-async def test_entry_judgement_proposal_voting(mocker):
+def test_entry_judgement_proposal_voting(mocker):
     """日付条件を満たしていない提案のステータスが投票状態であること"""
     # give
     test_proposal_id = "test_proposal_id"
@@ -102,7 +100,7 @@ async def test_entry_judgement_proposal_voting(mocker):
         is_complete_vote=False,  # 自動で１年前の日付にする処理を外す
     )
     # when
-    actual: JudgementStatusDto = await judgement_proposal_service.execute(
+    actual: JudgementStatusDto = judgement_proposal_service.execute(
         proposal_id=test_proposal_id
     )
 
@@ -117,8 +115,7 @@ async def test_entry_judgement_proposal_voting(mocker):
 
 
 @pytest.mark.skipif(TEST_SKIP_CONTRACT, reason="コントラクトを実行する処理のため")
-@pytest.mark.asyncio
-async def test_entry_judgement_proposal_accept_run_contract(mocker):
+def test_entry_judgement_proposal_accept_run_contract(mocker):
     """条件を満たしている提案のステータスが承認でき、コントラクトも正常に実行可能であること"""
     # give
     test_proposal_id = "test_proposal_id"
@@ -136,7 +133,7 @@ async def test_entry_judgement_proposal_accept_run_contract(mocker):
     )
 
     # when
-    actual: JudgementStatusDto = await judgement_proposal_service.execute(
+    actual: JudgementStatusDto = judgement_proposal_service.execute(
         proposal_id=test_proposal_id
     )
 

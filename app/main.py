@@ -9,6 +9,7 @@ from fastapi_utils.tasks import repeat_every
 from app import cli, config
 
 from .routers.account_router import account_router
+from .routers.demo_router import demo_router
 from .routers.extension_router import extension_router
 from .routers.prize_router import prize_router
 from .routers.proposal_router import proposal_router
@@ -42,6 +43,7 @@ def get_application() -> FastAPI:
     app.include_router(prize_router)
     app.include_router(extension_router)
     app.include_router(web3_router)
+    app.include_router(demo_router)
     return app
 
 
@@ -59,9 +61,9 @@ async def validation_exception_handler(
 
 
 @app.on_event("startup")
-@repeat_every(seconds=60 * config.batch_interval_minute)  # 5 min
-async def remove_expired_tokens_task() -> None:
-    await cli.main()
+@repeat_every(seconds=60 * config.batch_interval_minute)
+def remove_expired_tokens_task() -> None:
+    cli.main()
 
 
 if __name__ == "__main__":

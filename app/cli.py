@@ -17,7 +17,7 @@ from app.services.proposal import (
 from app.utils.logging import logger
 
 
-async def main():
+def main():
     voting_proposals: List[Proposal] = find_proposal_service.execute(
         proposal_status=ProposalStatus.VOTING
     )
@@ -26,10 +26,8 @@ async def main():
     for proposal in voting_proposals:
         logger.info(f"{'=' * 100}")
         try:
-            status: JudgementStatusDto = (
-                await judgement_proposal_service.execute(
-                    proposal_id=proposal.proposal_id
-                )
+            status: JudgementStatusDto = judgement_proposal_service.execute(
+                proposal_id=proposal.proposal_id
             )
             logger.info(
                 f"Check Complete! {proposal.title=}, {status.proposal_status=}"
