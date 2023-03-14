@@ -13,7 +13,7 @@ from app.utils.common import generate_id_str, now
 from app.utils.logging import logger
 
 
-async def execute(
+def execute(
     user_id: str, proposal_id: str, request: EntryProposalVoteRequest
 ) -> EntryProposalVoteDto:
     # ユーザーが存在することを確認
@@ -36,16 +36,14 @@ async def execute(
     mint_token_amount = int(10 * score)
 
     logger.info(f"トークン発行. {user_id=}, {mint_token_amount=}")
-    await inosapo_ft.transfer(user.wallet_address, amount=mint_token_amount)
+    inosapo_ft.transfer(user.wallet_address, amount=mint_token_amount)
 
     try:
         # TODO: スマコンでトークンの送金までできるようにする。
-        await proposal_vote.vote(
+        proposal_vote.vote(
             int(proposal.nft_token_id), user.wallet_address, request.judgement
         )
-        await inosapo_ft.transfer(
-            user.wallet_address, amount=mint_token_amount
-        )
+        inosapo_ft.transfer(user.wallet_address, amount=mint_token_amount)
     except Exception as e:
         logger.warn(f"コントラクトの実行処理で失敗しました.投票処理は完了させます.  {e=}")
 

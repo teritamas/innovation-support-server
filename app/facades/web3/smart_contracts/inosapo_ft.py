@@ -46,7 +46,7 @@ class InosapoFT(BaseContract):
         """コントラクトの名称を取得"""
         return self.contract.functions.name().call()
 
-    async def mint_deposit(self):
+    def mint_deposit(self):
         tx = self.contract.functions.mintDeposit().buildTransaction(
             {
                 "nonce": self.network.eth.getTransactionCount(
@@ -58,7 +58,7 @@ class InosapoFT(BaseContract):
         tx_result = self.execute(tx)
         logger.info(f"{tx_result=}")
 
-    async def transfer(self, address, amount):
+    def transfer(self, address, amount):
         """管理者アドレスのトークンを指定したユーザのアドレスに移管する"""
         tx = self.contract.functions.transfer(
             self.convert_checksum_address(address), amount
@@ -73,7 +73,7 @@ class InosapoFT(BaseContract):
         tx_result = self.execute(tx)
         logger.info(f"{tx_result=}")
 
-    async def transfer_to_vote_contract(self, amount):
+    def transfer_to_vote_contract(self, amount):
         """投票用コントラクトにデポジットを送金する"""
         tx = self.contract.functions.transfer(
             self.convert_checksum_address(
@@ -91,7 +91,7 @@ class InosapoFT(BaseContract):
         tx_result = self.execute(tx)
         logger.info(f"{tx_result=}")
 
-    async def burn(self, address, amount):
+    def burn(self, address, amount):
         """ウォレットアドレスが所有しているトークンを削除する"""
         tx = self.contract.functions.burn(
             self.convert_checksum_address(address), amount

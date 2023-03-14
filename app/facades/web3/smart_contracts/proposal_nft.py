@@ -54,9 +54,7 @@ class ProposalNFT(BaseContract):
         tokenId = int(logs[-1]["topics"][-1].hex().replace("0x", ""), base=16)
         return tokenId
 
-    async def mint(
-        self, proposer_address: str, identifier: str, amount: int
-    ) -> str:
+    def mint(self, proposer_address: str, identifier: str, amount: int) -> str:
         """提案NFTを発行し提案者のウォレットにNFTを紐づける
 
         Args:

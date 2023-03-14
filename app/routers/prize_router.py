@@ -63,11 +63,11 @@ def entry_prize(
     description="指定した景品をトークンと交換する。",
     response_model=EntryPrizeTradeResponse,
 )
-async def entry_prize_trade(
+def entry_prize_trade(
     prize_id: str,
     auth: AuthorizedClientSchema = Depends(authenticate_key),
 ):
-    balance = await entry_prize_trade_service.execute(
+    balance = entry_prize_trade_service.execute(
         user_id=auth.user_id, prize_id=prize_id
     )
     if balance:
