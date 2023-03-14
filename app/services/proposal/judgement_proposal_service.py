@@ -14,7 +14,7 @@ from app.utils.common import now
 from app.utils.logging import logger
 
 
-async def execute(proposal_id: str) -> JudgementStatusDto:
+def execute(proposal_id: str) -> JudgementStatusDto:
     """提案の状態を確認し、可決しているかどうかを確認する。"""
 
     proposal: Proposal = proposals_store.fetch_proposal(id=proposal_id)
@@ -55,7 +55,7 @@ async def execute(proposal_id: str) -> JudgementStatusDto:
 
     # コントラクトをアップデートする
     try:
-        await proposal_vote.judgement_proposal(
+        proposal_vote.judgement_proposal(
             tokenId=int(proposal.nft_token_id), judgement=judgement_result
         )
     except Exception as e:

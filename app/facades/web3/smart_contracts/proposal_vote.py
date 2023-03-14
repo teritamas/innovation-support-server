@@ -97,7 +97,7 @@ class ProposalVoteContract(BaseContract):
         tx_result = self.execute(tx)
         logger.info(f"{tx_result=}")
 
-    async def judgement_proposal(self, tokenId: int, judgement: bool):
+    def judgement_proposal(self, tokenId: int, judgement: bool):
         tx = self.contract.functions.judgementProposal(
             tokenId, judgement
         ).buildTransaction(
