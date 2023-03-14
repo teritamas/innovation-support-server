@@ -31,8 +31,7 @@ def test_inosapo_ft_contract_function():
 
 
 @pytest.mark.skipif(True, reason="実際にMintを実行するため時間がかかり、かつテストコインを消費するため")
-@pytest.mark.asyncio
-async def test_inosapo_ft_mint_deposit():
+def test_inosapo_ft_mint_deposit():
     """所有者が発行済みのトークを投票者に分配できること"""
     # 動作確認用なので固定
     inosapo_ft = InosapoFT(
@@ -41,12 +40,11 @@ async def test_inosapo_ft_mint_deposit():
         contract_address=INOSAPO_FT_CONTRACT_ADDRESS,
     )
     assert inosapo_ft.owner() == "0x35b1C30648C4c486152EF1AD61A7868CF14cF894"
-    await inosapo_ft.mint_deposit()
+    inosapo_ft.mint_deposit()
 
 
 @pytest.mark.skipif(True, reason="実際にMintを実行するため時間がかかり、かつテストコインを消費するため")
-@pytest.mark.asyncio
-async def test_inosapo_ft_transfer():
+def test_inosapo_ft_transfer():
     """所有者が発行済みのトークを投票者に分配できること"""
     # 動作確認用なので固定
     inosapo_ft = InosapoFT(
@@ -55,12 +53,11 @@ async def test_inosapo_ft_transfer():
         contract_address=INOSAPO_FT_CONTRACT_ADDRESS,
     )
     assert inosapo_ft.owner() == "0x35b1C30648C4c486152EF1AD61A7868CF14cF894"
-    await inosapo_ft.transfer(VOTER_ADDRESS, 10)
+    inosapo_ft.transfer(VOTER_ADDRESS, 10)
 
 
 @pytest.mark.skipif(True, reason="実際にMintを実行するため時間がかかり、かつテストコインを消費するため")
-@pytest.mark.asyncio
-async def test_inosapo_ft_burn():
+def test_inosapo_ft_burn():
     """利用者の所持トークンを減らすことができること"""
     # 動作確認用なので固定
     inosapo_ft = InosapoFT(
@@ -69,4 +66,4 @@ async def test_inosapo_ft_burn():
         contract_address=INOSAPO_FT_CONTRACT_ADDRESS,
     )
     assert inosapo_ft.owner() == "0x35b1C30648C4c486152EF1AD61A7868CF14cF894"
-    await inosapo_ft.burn(VOTER_ADDRESS, 10)
+    inosapo_ft.burn(VOTER_ADDRESS, 10)

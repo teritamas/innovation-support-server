@@ -26,18 +26,18 @@ proposal_vote = ProposalVoteContract(
 @pytest.mark.asyncio
 async def test_proposal_vote_entry():
     """提案内容の投票を開始できること"""
-    await proposal_vote.entry_proposal(TEST_NFT_ID)
+    proposal_vote.entry_proposal(TEST_NFT_ID)
 
 
 @pytest.mark.skipif(True, reason="実際にMintを実行するため時間がかかり、かつテストコインを消費するため")
 @pytest.mark.asyncio
 async def test_proposal_vote_vote():
     """提案内容に対して投票ができること"""
-    await proposal_vote.vote(TEST_NFT_ID, VOTER_ADDRESS, True)
+    proposal_vote.vote(TEST_NFT_ID, VOTER_ADDRESS, True)
 
     # ２回目は失敗すること
     with pytest.raises(Exception) as e:
-        await proposal_vote.vote(TEST_NFT_ID, VOTER_ADDRESS, True)
+        proposal_vote.vote(TEST_NFT_ID, VOTER_ADDRESS, True)
 
 
 def test_proposal_vote_get_stats():

@@ -21,13 +21,13 @@ proposal_vote_router = APIRouter(prefix="/proposal", tags=["vote"])
     "/{proposal_id}/vote",
     response_model=EntryProposalVoteResponse,
 )
-async def entry_proposal_vote(
+def entry_proposal_vote(
     proposal_id: str,
     request: EntryProposalVoteRequest,
     auth: AuthorizedClientSchema = Depends(authenticate_key),
 ):
     """提案に対して投票を行う"""
-    dto = await entry_proposal_vote_service.execute(
+    dto = entry_proposal_vote_service.execute(
         auth.user_id, proposal_id, request
     )
     if dto is None:

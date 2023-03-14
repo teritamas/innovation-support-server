@@ -4,7 +4,7 @@ from app.schemas.prize.domain import Prize
 from app.utils.logging import logger
 
 
-async def execute(user_id: str, prize_id: str) -> str | None:
+def execute(user_id: str, prize_id: str) -> str | None:
     # プライズの情報を取得する
     prize = prizes_store.fetch_prize(prize_id)
     if prize is None:
@@ -22,7 +22,7 @@ async def execute(user_id: str, prize_id: str) -> str | None:
         )
         users_store.update_token_amount(user_id=user_id, balance=user_balance)
         return None
-    await inosapo_ft.burn(user.wallet_address, prize.required_token_amount)
+    inosapo_ft.burn(user.wallet_address, prize.required_token_amount)
 
     # DBの更新
     balance = update_database(user, prize_id, prize)

@@ -26,7 +26,7 @@ def test_inosapo_ft_contract_function():
 
 @pytest.mark.skipif(True, reason="実際にMintを実行するため時間がかかり、かつテストコインを消費するため")
 @pytest.mark.asyncio
-async def test_proposal_contract_function():
+def test_proposal_contract_function():
     """ネットワークに接続しサンプルのコントラクトを実行できること"""
     # 動作確認用なので固定
     test_identifier = "test_abcdefg"
@@ -39,7 +39,7 @@ async def test_proposal_contract_function():
     owner: str = proposal_nft.owner()
     assert owner == "0x35b1C30648C4c486152EF1AD61A7868CF14cF894"
 
-    tokenId = await proposal_nft.mint(
+    tokenId = proposal_nft.mint(
         proposer_address=PROPOSER_ADDRESS,  # 決め打ちで自身のMetamask
         identifier=test_identifier,
         amount=test_token_amount,

@@ -46,15 +46,15 @@ async def execute(
         )
 
         # TODO:  ここでコントラクトの書き込み処理
-        nft_token_id = await proposal_nft.mint(
+        nft_token_id = proposal_nft.mint(
             proposal_user.wallet_address,
             identifier=nft_uri,
             amount=proposal_fundraising_condition.procurement_token_amount,
         )
-        await inosapo_ft.transfer_to_vote_contract(
+        inosapo_ft.transfer_to_vote_contract(
             proposal_fundraising_condition.procurement_token_amount
         )
-        await proposal_vote.entry_proposal(tokenId=nft_token_id)
+        proposal_vote.entry_proposal(tokenId=nft_token_id)
 
         # FireStoreに保存するフォーマットに変換
         proposal = Proposal.parse_obj(request.dict())

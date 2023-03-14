@@ -71,7 +71,7 @@ class ProposalVoteContract(BaseContract):
             tx_result = self.execute(tx)
             logger.info(tx_result)
 
-    async def entry_proposal(self, tokenId):
+    def entry_proposal(self, tokenId):
         tx = self.contract.functions.entryProposal(tokenId).buildTransaction(
             {
                 "nonce": self.network.eth.getTransactionCount(
@@ -83,7 +83,7 @@ class ProposalVoteContract(BaseContract):
         tx_result = self.execute(tx)
         logger.info(f"{tx_result=}")
 
-    async def vote(self, tokenId: int, voterAddress: str, judgement: bool):
+    def vote(self, tokenId: int, voterAddress: str, judgement: bool):
         tx = self.contract.functions.vote(
             tokenId, self.convert_checksum_address(voterAddress), judgement
         ).buildTransaction(
