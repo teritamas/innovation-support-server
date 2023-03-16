@@ -50,6 +50,25 @@ def fetch_user_from_wallet_address(wallet_address: str) -> List[User]:
     return [User.parse_obj(user.to_dict()) for user in users]
 
 
+def fetch_user_from_mail_address(mail_address: str) -> List[User]:
+    """MailAddressからユーザを検索する。
+
+    Args:
+        mail_address (str): 検索対象のMailアドレス
+
+    Returns:
+        List[User]: 検索で見つかったユーザの一覧（Mailアドレスはユニークなので、基本的に配列サイズは 0 or 1）
+    """
+    users = (
+        fire_store()
+        .collection(COLLECTION_PREFIX)
+        .where("mail_address", "==", mail_address)
+        .stream()
+    )
+
+    return [User.parse_obj(user.to_dict()) for user in users]
+
+
 def add_token_amount(user_id: str, amount: int) -> int:
     """トークンを追加する
 

@@ -6,7 +6,6 @@ from app.services.user import (
     detail_user_by_wallet_address_service,
     entry_user_service,
 )
-from app.utils.authorization import authenticate_key
 
 account_router = APIRouter(prefix="", tags=["account"])
 
@@ -15,8 +14,8 @@ account_router = APIRouter(prefix="", tags=["account"])
     "/signup", description="サインアップ.", response_model=EntryUserResponse
 )
 def signup(request: EntryUserRequest):
-    user_id = entry_user_service.execute(request=request)
-    return EntryUserResponse(user_id=user_id)
+    dto = entry_user_service.execute(request=request)
+    return EntryUserResponse(**dto.dict())
 
 
 @account_router.get(
@@ -32,3 +31,18 @@ def login_wallet_address(
         return DetailUserResponse(**user.dict())
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+
+# @account_router.get(
+#     "/login/mail_address/{mail_address}",
+#     description="メールアドレスからユーザ情報を取得.",
+#     response_model=DetailUserResponse,
+# )
+# def login_mail_address(
+#     mail_address: str,
+# ):
+#     user = detail_user_by_mail_address_service.execute(mail_address)
+#     if user:
+#         return DetailUserResponse(**user.dict())
+#     else:
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)

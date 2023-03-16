@@ -9,6 +9,7 @@ from app.schemas.user.dto import UserProposalVote
 
 class EntryUserResponse(BaseModel):
     user_id: str = Field("", description="ユーザID")
+    account_type: str = Field("", description="アカウントの種類")
 
 
 class DetailUserResponse(User):

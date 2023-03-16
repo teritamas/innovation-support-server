@@ -29,6 +29,7 @@ def test_signup_not_exists(mocker):
     assert response.status_code == 200
     actual_user_id = response.json().get("user_id")
     assert actual_user_id == test_user_id
+    assert response.json().get("account_type") == "standard"
 
     actual_user = users_store.fetch_user(id=actual_user_id)
     assert actual_user.account_type == AccountType.STANDARD
@@ -58,6 +59,7 @@ def test_signup_not_exists_temp_user(mocker):
     assert response.status_code == 200
     actual_user_id = response.json().get("user_id")
     assert actual_user_id == test_user_id
+    assert response.json().get("account_type") == "temp"
 
     actual_user = users_store.fetch_user(id=actual_user_id)
     assert actual_user.account_type == AccountType.TEMP
@@ -70,6 +72,7 @@ def test_signup_exists(mocker):
     test_signup_not_exists(mocker=mocker)
     # give
     test_user_id = "test_user_id"
+    test_wallet_address = "0xb872960EF2cBDecFdC64115E1C77067c16f042FB"
     mocker.patch(
         "app.services.user.entry_user_service.generate_id_str",
         return_value=test_user_id,
@@ -79,12 +82,19 @@ def test_signup_exists(mocker):
         "/signup",
         json={
             "user_name": "test_user",
-            "wallet_address": "0xb872960EF2cBDecFdC64115E1C77067c16f042FB",
+            "wallet_address": test_wallet_address,
         },
     )
 
     assert response.status_code == 200
-    assert response.json() == {"user_id": f"{test_user_id}"}
+    actual_user_id = response.json().get("user_id")
+    assert actual_user_id == test_user_id
+    assert response.json().get("account_type") == "standard"
+
+    actual_user = users_store.fetch_user(id=actual_user_id)
+    assert actual_user.account_type == AccountType.STANDARD
+    assert actual_user.wallet_address == test_wallet_address
+    assert actual_user.user_name == "test_user"
 
 
 def test_login_wallet_address(mocker):

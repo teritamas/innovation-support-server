@@ -1,10 +1,19 @@
 from typing import List
 
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 from app.schemas.proposal.domain import Proposal
 from app.schemas.proposal_vote.domain import ProposalVote
 from app.schemas.user.domain import User
+
+
+class EntryUserService(BaseModel):
+    user_id: str = Field(
+        ...,
+    )
+    account_type: str = Field(
+        ...,
+    )
 
 
 class UserProposalVote(ProposalVote):
