@@ -13,7 +13,7 @@ def test_signup_not_exists(mocker):
     test_user_id = "test_user_id"
     test_wallet_address = "0xb872960EF2cBDecFdC64115E1C77067c16f042FB"
     mocker.patch(
-        "app.services.user.entry_standard_user_service.generate_id_str",
+        "app.services.user.entry_user_service.generate_id_str",
         return_value=test_user_id,
     )
     users_store.delete_user(test_user_id)  # 削除してから実行する
@@ -42,7 +42,7 @@ def test_signup_exists(mocker):
     # give
     test_user_id = "test_user_id"
     mocker.patch(
-        "app.services.user.entry_standard_user_service.generate_id_str",
+        "app.services.user.entry_user_service.generate_id_str",
         return_value=test_user_id,
     )
 

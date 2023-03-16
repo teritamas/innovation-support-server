@@ -4,7 +4,7 @@ from app.schemas.user.requests import EntryStandardUserRequest
 from app.schemas.user.response import DetailUserResponse, EntryUserResponse
 from app.services.user import (
     detail_user_by_wallet_address_service,
-    entry_standard_user_service,
+    entry_user_service,
 )
 from app.utils.authorization import authenticate_key
 
@@ -15,7 +15,7 @@ account_router = APIRouter(prefix="", tags=["account"])
     "/signup", description="サインアップ.", response_model=EntryUserResponse
 )
 def signup(request: EntryStandardUserRequest):
-    user_id = entry_standard_user_service.execute(request=request)
+    user_id = entry_user_service.execute(request=request)
     return EntryUserResponse(user_id=user_id)
 
 
