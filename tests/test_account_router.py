@@ -116,3 +116,24 @@ def test_login_wallet_address(mocker):
     assert actual_user.user_name == "test_user"
     assert actual_user.message == ""
     assert actual_user.wallet_address == test_wallet_address
+
+
+def test_login_mail_address(mocker):
+    """メールアドレスを利用してログインができること"""
+    test_signup_not_exists_temp_user(mocker)
+    # give
+    test_user_id = "test_user_id"
+    test_mail_address = "test@test.co.jp"
+
+    response = client.get(
+        f"/login/mail_address/{test_mail_address}",
+        headers={"Authorization": test_user_id},
+    )
+
+    assert response.status_code == 200
+    actual_user = User.parse_obj(response.json())
+    assert actual_user.user_id == test_user_id
+    assert actual_user.total_token_amount == 0
+    assert actual_user.user_name == "test_user"
+    assert actual_user.message == ""
+    assert actual_user.mail_address == test_mail_address
