@@ -42,6 +42,10 @@ class User(BaseModel):
 
     wallet_address: str = Field("", description="ユーザに紐づくウォレットのアドレス")
     total_token_amount: float = Field(0, description="ユーザの保持トークンの総量")
+    cached_token_amount: float = Field(
+        0,
+        description="AccountType=Tempの時、ユーザが獲得したトークンの総量. Standardユーザに昇格した場合にこのトークンが全て振り込まれる。",
+    )
 
     purchased_prizes: List[UserPurchasedPrize] = Field(
         [], description="このユーザが購入した研修"

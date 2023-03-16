@@ -9,6 +9,7 @@ from app.facades.web3 import inosapo_ft, proposal_vote
 from app.schemas.proposal_vote.domain import ProposalVote
 from app.schemas.proposal_vote.dto import EntryProposalVoteDto
 from app.schemas.proposal_vote.requests import EntryProposalVoteRequest
+from app.schemas.user.domain import AccountType
 from app.utils.common import generate_id_str, now
 from app.utils.logging import logger
 
@@ -35,17 +36,13 @@ def execute(
     score = rule_base.calculation_judgement_reason(request.judgement_reason)
     mint_token_amount = int(10 * score)
 
-    logger.info(f"トークン発行. {user_id=}, {mint_token_amount=}")
-    inosapo_ft.transfer(user.wallet_address, amount=mint_token_amount)
-
-    try:
-        # TODO: スマコンでトークンの送金までできるようにする。
-        proposal_vote.vote(
-            int(proposal.nft_token_id), user.wallet_address, request.judgement
+    if user.account_type == AccountType.STANDARD:
+        _mint_token_on_blockchain(request, user, proposal, mint_token_amount)
+    else:
+        # 一時ユーザの場合はmintせず、一時領域に保管する
+        users_store.add_cached_token_amount(
+            user_id=user_id, amount=mint_token_amount
         )
-        inosapo_ft.transfer(user.wallet_address, amount=mint_token_amount)
-    except Exception as e:
-        logger.warn(f"コントラクトの実行処理で失敗しました.投票処理は完了させます.  {e=}")
 
     save_db(user_id, proposal_id, request, "", mint_token_amount)
     balance = users_store.add_token_amount(
@@ -55,6 +52,18 @@ def execute(
     return EntryProposalVoteDto(
         vote_nft_id="", reword=mint_token_amount, balance=balance
     )
+
+
+def _mint_token_on_blockchain(request, user, proposal, mint_token_amount):
+    logger.info(f"トークン発行. {user.user_id=}, {mint_token_amount=}")
+    try:
+        # TODO: スマコンでトークンの送金までできるようにする。
+        proposal_vote.vote(
+            int(proposal.nft_token_id), user.wallet_address, request.judgement
+        )
+        inosapo_ft.transfer(user.wallet_address, amount=mint_token_amount)
+    except Exception as e:
+        logger.warn(f"コントラクトの実行処理で失敗しました.投票処理は完了させます.  {e=}")
 
 
 def save_db(

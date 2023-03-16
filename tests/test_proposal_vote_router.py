@@ -7,19 +7,20 @@ from app.schemas.proposal_vote.responses import (
     EntryProposalVoteResponse,
     FetchProposalVoteResponse,
 )
-from app.schemas.user.domain import User
+from app.schemas.user.domain import AccountType, User
 from tests.proposal_routers.test_entry_proposal import test_entry_proposal
 
 client = TestClient(app)
 
 
-def add_vote_user(user_id: str):
+def _add_standard_vote_user(user_id: str):
     users_store.add_user(
         id=user_id,
         content=User(
             user_id=user_id,
             user_name="vote_user",
             wallet_address="0x999050DBCD3a7fDBcF1204201587797D1849AC97",  # テストユーザ2のウォレットアドレス
+            account_type=AccountType.STANDARD,
         ),
     )
 
@@ -27,7 +28,7 @@ def add_vote_user(user_id: str):
 def test_entry_proposal_vote(mocker):
     test_entry_proposal(mocker)
     test_vote_user_id = "test_vote_user_id"
-    add_vote_user(test_vote_user_id)
+    _add_standard_vote_user(test_vote_user_id)
 
     # give
     test_proposal_vote_id = "test_proposal_vote_id"
@@ -60,6 +61,52 @@ def test_entry_proposal_vote(mocker):
     assert actual.balance == 1
 
 
+def _add_temp_vote_user(user_id: str):
+    users_store.add_user(
+        id=user_id,
+        content=User(
+            user_id=user_id,
+            user_name="vote_user",
+            mail_address="test@test.co.jp",  # テストユーザ2のウォレットアドレス
+            account_type=AccountType.TEMP,
+        ),
+    )
+
+
+def test_entry_proposal_vote_from_temp_user(mocker):
+    """一時ユーザが投票できること"""
+    test_entry_proposal(mocker)
+    test_vote_user_id = "test_vote_temp_user_id"
+    _add_temp_vote_user(test_vote_user_id)
+
+    # give
+    test_proposal_vote_id = "test_proposal_vote_id"
+    test_proposal_id = "test_proposal_id"
+    test_token_id = "test_token_id"
+    mocker.patch(
+        "app.services.proposal_vote.entry_proposal_vote_service.generate_id_str",
+        return_value=test_proposal_vote_id,
+    )
+    proposal_votes_store.delete_proposal_vote(test_proposal_id, test_token_id)
+
+    response = client.post(
+        f"/proposal/{test_proposal_id}/vote",
+        headers={"Authorization": test_vote_user_id},
+        json={
+            "judgement": True,
+            "judgement_reason": "テスト",
+        },
+    )
+
+    assert response.status_code == 200
+    actual = EntryProposalVoteResponse.parse_obj(response.json())
+    assert actual.reward == 1
+    assert actual.balance == 1
+    user = users_store.fetch_user(test_vote_user_id)
+    assert user.account_type == AccountType.TEMP
+    assert user.cached_token_amount == 1
+
+
 def test_fetch_proposal_vote_voted_same_proposal_user(mocker):
     """自分の提案を確認した場合、自分の提案である旨が返されること"""
     test_entry_proposal_vote(mocker)
@@ -83,7 +130,7 @@ def test_fetch_proposal_vote_voted(mocker):
     """自分の提案でない提案を確認し投票済みの場合、投票内容が返ること"""
     test_entry_proposal_vote(mocker)
     test_vote_user_id = "test_vote_user_id"
-    add_vote_user(test_vote_user_id)
+    _add_standard_vote_user(test_vote_user_id)
 
     # give
     test_proposal_id = "test_proposal_id"
@@ -104,7 +151,7 @@ def test_fetch_proposal_vote_not_voted(mocker):
     """自分の提案でない提案を確認し投票済みでない場合、その旨が返ること"""
     # give
     test_vote_user_id = "test_vote_user_id"
-    add_vote_user(test_vote_user_id)
+    _add_standard_vote_user(test_vote_user_id)
 
     test_proposal_id = "test_proposal_id"
     test_proposal_vote_id = "test_proposal_vote_id"
@@ -131,7 +178,7 @@ def test_fetch_proposal_vote_not_voted(mocker):
 def test_entry_proposal_vote_run_contract(mocker):
     test_entry_proposal(mocker)
     test_vote_user_id = "test_vote_user_id"
-    add_vote_user(test_vote_user_id)
+    _add_standard_vote_user(test_vote_user_id)
 
     # give
     test_proposal_vote_id = "test_proposal_vote_id"
