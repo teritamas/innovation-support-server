@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import Enum
 from typing import List
 
 from pydantic import BaseModel, Field, PositiveInt
@@ -19,15 +20,25 @@ class UserPurchasedPrize(BaseModel):
     purchased_date: datetime = Field(now(), description="購入時刻")
 
 
+class AccountType(str, Enum):
+    TEMP = "temp"  # ウォレットアドレスを登録していないアカウント
+    STANDARD = "standard"  # ウォレットアドレスを登録済みのアカウント
+
+
 class User(BaseModel):
     """ユーザドメイン"""
 
     user_id: str = Field("", description="ユーザID")
     user_name: str = Field("", description="ユーザ名")
+    mail_address: str = Field("", description="メールアドレス")
     message: str = Field("", description="一言メッセージ")
 
     created_at: datetime = Field(now(), description="作成時刻")
     updated_at: datetime = Field(now(), description="編集時刻")
+    account_type: AccountType = Field(
+        AccountType.STANDARD,
+        description="メールアドレスでログインした場合=temp, Metamaskなどと連携してログインした場合=standard",
+    )
 
     wallet_address: str = Field("", description="ユーザに紐づくウォレットのアドレス")
     total_token_amount: float = Field(0, description="ユーザの保持トークンの総量")
