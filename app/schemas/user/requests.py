@@ -6,3 +6,7 @@ class EntryUserRequest(BaseModel):
 
     wallet_address: str = Field("", description="ウォレットアドレス")
     mail_address: str = Field("", description="メールアドレス.ウォレットアドレスが含まれている場合は不要")
+
+
+class UpdateStandardUserRequest(BaseModel):
+    wallet_address: str = Field(..., description="ウォレットアドレス")

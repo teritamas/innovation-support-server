@@ -1,3 +1,5 @@
+from unittest import mock
+
 from fastapi.testclient import TestClient
 
 from app.facades.database import users_store
@@ -137,3 +139,23 @@ def test_login_mail_address(mocker):
     assert actual_user.user_name == "test_user"
     assert actual_user.message == ""
     assert actual_user.mail_address == test_mail_address
+
+
+def test_update_user(mocker):
+    """TempユーザをStandardユーザにバージョンアップする"""
+    test_signup_not_exists_temp_user(mocker=mocker)
+
+    test_user_id = "test_user_id"
+    test_wallet_address = "0xb872960EF2cBDecFdC64115E1C77067c16f042FB"
+
+    response = client.patch(
+        f"/signup/{test_user_id}/standard",
+        json={
+            "wallet_address": test_wallet_address,
+        },
+    )
+
+    assert response.status_code == 200
+    actual_user_id = response.json().get("user_id")
+    assert actual_user_id == test_user_id
+    assert response.json().get("account_type") == "standard"
