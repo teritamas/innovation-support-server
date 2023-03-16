@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 
 
-class EntryStandardUserRequest(BaseModel):
+class EntryUserRequest(BaseModel):
     user_name: str = Field("", description="ユーザ名")
 
     wallet_address: str = Field("", description="ウォレットアドレス")

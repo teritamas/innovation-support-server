@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status
 
-from app.schemas.user.requests import EntryStandardUserRequest
+from app.schemas.user.requests import EntryUserRequest
 from app.schemas.user.response import DetailUserResponse, EntryUserResponse
 from app.services.user import (
     detail_user_by_wallet_address_service,
@@ -14,7 +14,7 @@ account_router = APIRouter(prefix="", tags=["account"])
 @account_router.post(
     "/signup", description="サインアップ.", response_model=EntryUserResponse
 )
-def signup(request: EntryStandardUserRequest):
+def signup(request: EntryUserRequest):
     user_id = entry_user_service.execute(request=request)
     return EntryUserResponse(user_id=user_id)
 
