@@ -16,6 +16,11 @@ poetry run pytest .
 poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
+実行後下記のURLにSwaggerDocが表示される
+
+- http://localhost:8000
+
+
 ## その他スクリプト
 
 ### テストユーザを作成し投票

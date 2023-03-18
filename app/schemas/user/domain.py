@@ -31,6 +31,9 @@ class User(BaseModel):
 
     wallet_address: str = Field("", description="ユーザに紐づくウォレットのアドレス")
     total_token_amount: float = Field(0, description="ユーザの保持トークンの総量")
+    total_exchangeable_token: float = Field(
+        0, description="保有トークンのうち現金に交換可能なトークン量"
+    )
 
     purchased_prizes: List[UserPurchasedPrize] = Field(
         [], description="このユーザが購入した研修"
