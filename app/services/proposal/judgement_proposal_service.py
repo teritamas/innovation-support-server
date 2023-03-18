@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from typing import List
 
-from app.facades.database import proposals_store
+from app.facades.database import proposals_store, users_store
 from app.facades.web3 import proposal_vote
 from app.schemas.proposal.domain import (
     JudgementStatusDto,
@@ -64,6 +64,11 @@ def execute(proposal_id: str) -> JudgementStatusDto:
     # DBの内容を更新する
     proposals_store.update_proposal(
         id=proposal_id, status=result_proposal_status
+    )
+
+    users_store.add_exchangeable_token_amount(
+        user_id=proposal.user_id,
+        exchangeable_amount=proposal.proposal_fundraising_condition.procurement_token_amount,
     )
 
     return JudgementStatusDto(
