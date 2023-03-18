@@ -66,3 +66,7 @@ cotoha_client_secret = environ.get("COTOHA_CLIENT_SECRET", "")
 
 # バッチの更新速度
 batch_interval_minute = int(environ.get("BATCH_INTERVAL_MINUTE", 1))
+
+block_explorer_url = environ.get(
+    "BLOCK_EXPLORER_URL", "https://goerli.etherscan.io/"
+)

@@ -3,7 +3,7 @@ from typing import List
 from pydantic import BaseModel, Field
 
 from app.schemas.proposal.domain import Proposal
-from app.schemas.proposal.dto import ListProposalDto
+from app.schemas.proposal.dto import ListProposalDto, ProposalDetailDto
 from app.schemas.proposal_vote.domain import ProposalVote
 
 from ..user.domain import User
@@ -14,7 +14,9 @@ class EntryProposalResponse(BaseModel):
 
 
 class DetailProposalResponse(BaseModel):
-    proposal: Proposal = Field(Proposal(), description="提案内容")
+    proposal: ProposalDetailDto = Field(
+        ProposalDetailDto(), description="提案内容"
+    )
     proposal_user: User = Field(User(), description="ユーザ情報")
 
 

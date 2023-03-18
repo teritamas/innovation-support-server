@@ -76,6 +76,34 @@ def add_token_amount(user_id: str, amount: int) -> int:
     return balance
 
 
+def add_exchangeable_token_amount(
+    user_id: str, exchangeable_amount: int
+) -> int:
+    """トークンを追加する
+
+    Args:
+        user_id (str): 対象のユーザID
+        amount (int): 増やすトークンの量
+
+    Raises:
+        RuntimeError: 存在しないユーザIDが指定された場合
+
+    Returns:
+        int: 計算後の残高
+    """
+
+    user = fetch_user(user_id)
+    if user is None:
+        raise RuntimeError(f"{user_id=} is not found.")
+
+    balance = user.total_exchangeable_token + exchangeable_amount
+    user.total_exchangeable_token = balance
+
+    add_user(id=user_id, content=user)
+
+    return balance
+
+
 def reduce_token_amount(user_id: str, amount: int) -> int:
     """トークンを消費する
 
