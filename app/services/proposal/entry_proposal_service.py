@@ -1,7 +1,8 @@
 import base64
 
-from fastapi import UploadFile
+from fastapi import BackgroundTasks, UploadFile
 from pdf2image import convert_from_bytes
+from retry import retry
 
 from app import config
 from app.facades.database import proposals_store, timelines_store, users_store
@@ -20,7 +21,10 @@ from app.utils.logging import logger
 
 
 async def execute(
-    user_id: str, request: EntryProposalRequest, file: UploadFile
+    background_tasks: BackgroundTasks,
+    user_id: str,
+    request: EntryProposalRequest,
+    file: UploadFile,
 ) -> str:
     try:
         logger.info(f"entry proposal . {user_id=}, {request=}")
@@ -45,16 +49,18 @@ async def execute(
             request.proposal_phase
         )
 
-        # TODO:  ここでコントラクトの書き込み処理
-        nft_token_id = proposal_nft.mint(
-            proposal_user.wallet_address,
-            identifier=nft_uri,
-            amount=proposal_fundraising_condition.procurement_token_amount,
+        # コントラクトの書き込み処理、失敗することがあるため、全て３回ずつリトライする
+        nft_token_id = _nft_mint(
+            proposal_user, nft_uri, proposal_fundraising_condition
         )
-        inosapo_ft.transfer_to_vote_contract(
-            proposal_fundraising_condition.procurement_token_amount
+        background_tasks.add_task(
+            _transfer_to_vote_contract,
+            proposal_fundraising_condition.procurement_token_amount,
         )
-        proposal_vote.entry_proposal(tokenId=nft_token_id)
+        background_tasks.add_task(
+            _entry_proposal,
+            nft_token_id,
+        )
 
         # FireStoreに保存するフォーマットに変換
         proposal = Proposal.parse_obj(request.dict())
@@ -90,6 +96,30 @@ async def execute(
 
     except Exception as e:
         logger.info("error", e)
+
+
+@retry(exceptions=Exception, tries=3)
+def _nft_mint(proposal_user, nft_uri, proposal_fundraising_condition):
+    """バックグラウンドでリトライ処理をする。通常3回以内には成功するので3回実施する"""
+    nft_token_id = proposal_nft.mint(
+        proposal_user.wallet_address,
+        identifier=nft_uri,
+        amount=proposal_fundraising_condition.procurement_token_amount,
+    )
+
+    return nft_token_id
+
+
+@retry(exceptions=Exception, tries=3)
+def _transfer_to_vote_contract(producer_token_amount):
+    """バックグラウンドでリトライ処理をする。通常3回以内には成功するので3回実施する"""
+    inosapo_ft.transfer_to_vote_contract(producer_token_amount)
+
+
+@retry(exceptions=Exception, tries=3)
+def _entry_proposal(nft_token_id):
+    """バックグラウンドでリトライ処理をする。通常3回以内には成功するので3回実施する"""
+    proposal_vote.entry_proposal(tokenId=nft_token_id)
 
 
 def build_condition(phase: ProposalPhase) -> ProposalFundraisingCondition:

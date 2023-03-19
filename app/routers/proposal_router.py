@@ -2,6 +2,7 @@ import os
 
 from fastapi import (
     APIRouter,
+    BackgroundTasks,
     Body,
     Depends,
     File,
@@ -43,12 +44,16 @@ proposal_router = APIRouter(prefix="/proposal", tags=["proposal"])
     "", description="提案登録API.", response_model=EntryProposalResponse
 )
 async def entry_proposal(
+    background_tasks: BackgroundTasks,
     request: EntryProposalRequest = Body(...),
     file: UploadFile = File(...),
     auth: AuthorizedClientSchema = Depends(authenticate_key),
 ):
     proposal_id = await entry_proposal_service.execute(
-        auth.user_id, request, file
+        background_tasks=background_tasks,
+        user_id=auth.user_id,
+        request=request,
+        file=file,
     )
     return EntryProposalResponse(proposal_id=proposal_id)
 
