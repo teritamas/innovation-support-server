@@ -126,7 +126,6 @@ def test_entry_proposal_run_contract(mocker):
     test_proposal_id = "test_proposal_id"
     test_user_id = "test_user_id"
     test_file_name = "sample.pdf"
-    test_token_id = 1
     mocker.patch(
         "app.services.proposal.entry_proposal_service.generate_id_str",
         return_value=test_proposal_id,
