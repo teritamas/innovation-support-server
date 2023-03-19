@@ -60,6 +60,7 @@ class InosapoFT(BaseContract):
 
     def transfer(self, address, amount):
         """管理者アドレスのトークンを指定したユーザのアドレスに移管する"""
+        logger.info(f"指定したアドレスにトークンを移管します. {address=}, {amount=}")
         tx = self.contract.functions.transfer(
             self.convert_checksum_address(address), amount
         ).buildTransaction(
@@ -71,7 +72,7 @@ class InosapoFT(BaseContract):
             }
         )
         tx_result = self.execute(tx)
-        logger.info(f"{tx_result=}")
+        logger.info(f"トークンの移管が完了しました. {tx_result=}")
 
     def transfer_to_vote_contract(self, amount):
         """投票用コントラクトにデポジットを送金する"""

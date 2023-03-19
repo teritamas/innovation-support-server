@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 
 from app.schemas.auth.domain import AuthorizedClientSchema
 from app.schemas.proposal_vote.domain import ProposalVote
@@ -22,13 +22,17 @@ proposal_vote_router = APIRouter(prefix="/proposal", tags=["vote"])
     response_model=EntryProposalVoteResponse,
 )
 def entry_proposal_vote(
+    background_tasks: BackgroundTasks,
     proposal_id: str,
     request: EntryProposalVoteRequest,
     auth: AuthorizedClientSchema = Depends(authenticate_key),
 ):
     """提案に対して投票を行う"""
     dto = entry_proposal_vote_service.execute(
-        auth.user_id, proposal_id, request
+        background_tasks=background_tasks,
+        user_id=auth.user_id,
+        proposal_id=proposal_id,
+        request=request,
     )
     if dto is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
