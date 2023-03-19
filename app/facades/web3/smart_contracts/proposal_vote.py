@@ -72,6 +72,7 @@ class ProposalVoteContract(BaseContract):
             logger.info(tx_result)
 
     def entry_proposal(self, tokenId):
+        logger.info(f"提案内容を投票コントラクト登録します. {tokenId=}")
         tx = self.contract.functions.entryProposal(tokenId).buildTransaction(
             {
                 "nonce": self.network.eth.getTransactionCount(
@@ -81,9 +82,10 @@ class ProposalVoteContract(BaseContract):
             }
         )
         tx_result = self.execute(tx)
-        logger.info(f"{tx_result=}")
+        logger.info(f"提案内容の投票コントラクトへの登録に成功しました. {tokenId=}, {tx_result=}")
 
     def vote(self, tokenId: int, voterAddress: str, judgement: bool):
+        logger.info(f"投票コントラクトでの投票処理を開始します. {tokenId=}")
         tx = self.contract.functions.vote(
             tokenId, self.convert_checksum_address(voterAddress), judgement
         ).buildTransaction(
@@ -95,7 +97,7 @@ class ProposalVoteContract(BaseContract):
             }
         )
         tx_result = self.execute(tx)
-        logger.info(f"{tx_result=}")
+        logger.info(f"投票コントラクトでの投票処理に成功しました. {tokenId=}, {tx_result=}")
 
     def judgement_proposal(self, tokenId: int, judgement: bool):
         tx = self.contract.functions.judgementProposal(
