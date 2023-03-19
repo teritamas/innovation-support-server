@@ -2,9 +2,22 @@
 
 イノベーションサポートの BE です。
 
+## 全体像
+
+イノベーションサポートの全体像は下記の図の通りです。本リポジトリはそのうちの、緑枠の「バックエンド」のソースコードです。
+
+![アーキテクチャ](./docs/arch.png)
+
+その他のソースコードはそれぞれ、下記のリポジトリを確認してください
+
+- 青枠 - スマートコントラクト
+  - [GitHub - teritamas/innovation-support-smartcontract](https://github.com/teritamas/innovation-support-smartcontract)
+- 赤枠 - フロントエンド
+  - [GitHub - teritamas/innovation-support-frontend](https://github.com/teritamas/innovation-support-frontend)
+
 ## API ドキュメント
 
-API の種類や仕様に関しては下記の URL を参照
+API の種類や仕様に関しては下記の URL を参照してください
 
 - [DAO Innovation Support](https://innovation-support-server-fae3im6i6q-an.a.run.app/docs)
 
