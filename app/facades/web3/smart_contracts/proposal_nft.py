@@ -62,6 +62,9 @@ class ProposalNFT(BaseContract):
             identifier (str): 識別子
             amount(int):この提案で受け取りたいトークン量
         """
+        logger.info(
+            f"提案をNFT化します. {proposer_address=}, {identifier=}, {amount=}"
+        )
         tx = self.contract.functions.mintNft(
             self.convert_checksum_address(proposer_address), identifier, amount
         ).buildTransaction(
@@ -73,7 +76,9 @@ class ProposalNFT(BaseContract):
             }
         )
         tx_result = self.execute(tx)
+        logger.info(f"提案のNFTの登録が完了しました. {tx_result=}")
         tokenId = self.getTokenIdByTransactionLog(tx_result["logs"])
+        logger.info(f"提案のNFTのトークンIDの取得が完了しました. {tokenId=}")
         return tokenId
 
     def get_token_amount(self, tokenId):

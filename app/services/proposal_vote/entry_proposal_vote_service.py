@@ -1,3 +1,6 @@
+from fastapi import BackgroundTasks
+from retry import retry
+
 from app.facades.database import (
     proposal_votes_store,
     proposals_store,
@@ -14,7 +17,10 @@ from app.utils.logging import logger
 
 
 def execute(
-    user_id: str, proposal_id: str, request: EntryProposalVoteRequest
+    background_tasks: BackgroundTasks,
+    user_id: str,
+    proposal_id: str,
+    request: EntryProposalVoteRequest,
 ) -> EntryProposalVoteDto:
     # ユーザーが存在することを確認
     user = users_store.fetch_user(id=user_id)
@@ -40,10 +46,7 @@ def execute(
 
     try:
         # TODO: スマコンでトークンの送金までできるようにする。
-        proposal_vote.vote(
-            int(proposal.nft_token_id), user.wallet_address, request.judgement
-        )
-        inosapo_ft.transfer(user.wallet_address, amount=mint_token_amount)
+        background_tasks.add_task(_proposal_vote, request, user, proposal)
     except Exception as e:
         logger.warn(f"コントラクトの実行処理で失敗しました.投票処理は完了させます.  {e=}")
 
@@ -54,6 +57,13 @@ def execute(
 
     return EntryProposalVoteDto(
         vote_nft_id="", reword=mint_token_amount, balance=balance
+    )
+
+
+@retry(exceptions=Exception, tries=3)
+def _proposal_vote(request, user, proposal):
+    proposal_vote.vote(
+        int(proposal.nft_token_id), user.wallet_address, request.judgement
     )
 
 

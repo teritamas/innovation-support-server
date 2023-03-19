@@ -2,28 +2,102 @@
 
 イノベーションサポートの BE です。
 
+イノサポのサービスには下記の URL からアクセスしてください
+
+- [イノサポ - InnovationSupport](https://innovation-support-d391e.web.app)
+
+<div align="center">
+  <img src="./docs/app.png" height="500">
+</div>
+
+## 全体像
+
+イノベーションサポートの全体像は下記の図の通りです。本リポジトリはそのうちの、緑枠の「バックエンド」のソースコードです。
+
+![アーキテクチャ](./docs/arch.png)
+
+その他のソースコードはそれぞれ、下記のリポジトリを確認してください
+
+- 青枠 - スマートコントラクト
+  - [GitHub - teritamas/innovation-support-smartcontract](https://github.com/teritamas/innovation-support-smartcontract)
+- 赤枠 - フロントエンド
+  - [GitHub - teritamas/innovation-support-frontend](https://github.com/teritamas/innovation-support-frontend)
+
 ## API ドキュメント
 
-API の種類や仕様に関しては下記の URL を参照
+API の種類や仕様に関しては下記の URL を参照してください
 
 - [DAO Innovation Support](https://innovation-support-server-fae3im6i6q-an.a.run.app/docs)
 
 ## Quick Start
 
+はじめに`.env.sample`を参考に、本プロジェクト直下に`.env`のファイルを作成する。
+
+```sh:.env.sample
+# google cloudのサービスアカウントのキー
+CRED_PATH=
+# 提案NFTのコントラクトアドレス
+PROPOSAL_NFT_CONTRACT_ADDRESS=
+# トークンNFTのコントラクトアドレス
+INOSAPO_FT_CONTRACT_ADDRESS=
+# 投票コントラクトのコントラクトアドレス
+PROPOSAL_VOTE_CONTRACT_ADDRESS=
+
+# 本システムのウォレットの秘密鍵、存在しない場合は指定したパスに自動で生成される。
+SYSTEM_WALLET_PRIVATE_KEY_PATH=./key/wallet/dev_private.key
+# 上記のコントラクトをデプロイしたネットワーク名
+PROVIDE_NETWORK=https://goerli.blockpi.network/v1/rpc/public
+
+# Google Cloud Storageに提案すクリップとを保存する際のルートパス
+GOOGLE_CLOUD_STORAGE_BUCKET_NAME=proposal-for-innovation-support
+
+# フロントエンドのURL
+FRONTEND_URL=
+
+# Slack通知を利用する場合、通知先のSlackのIncoming WebhooksのURL
+DEFAULT_SLACK_INCOMING_WEBHOOKS_URL=
+
+# COTOHA APIの接続に必要な情報.　設定されていない場合は利用されない
+COTOHA_CLIENT_ID=
+COTOHA_CLIENT_SECRET=
+
+# バッチ処理の実行間隔
+BATCH_INTERVAL_MINUTE=1
+
+BLOCK_EXPLORER_URL=https://goerli.etherscan.io/
+```
+
+その後、下記のコマンドを実行し必要ライブラリのインストールと単体テストを行う。
+
 ```sh:
 poetry install
 poetry run pytest .
+```
+
+プログラムを実行する。
+
+```sh:
 poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-実行後下記のURLにSwaggerDocが表示される
+実行後下記の URL に SwaggerDoc が表示される
 
 - http://localhost:8000
 
 
 ## その他スクリプト
 
+### Docker による起動
+
+ローカルに Python 環境を構築することなく、Docker 上で起動することができる。
+
+```sh:
+docker-compose up -d
+```
+
 ### テストユーザを作成し投票
+
+テスト用に、指定した提案に対してサンプルユーザによる投票処理と、投票期間の終了処理を行う。
 
 ```sh:
 poetry run python scripts/sample_vote.py -h
