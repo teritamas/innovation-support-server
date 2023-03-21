@@ -126,28 +126,28 @@ def build_condition(phase: ProposalPhase) -> ProposalFundraisingCondition:
     """提案フェーズから提案が可決する条件を設定する"""
     if phase == ProposalPhase.SEED:
         limit_date = 7
-        procurement_token_amount = 50  # 500千円
+        procurement_token_amount = 500  # 500千円
         min_voter_count = 50
         min_agreement_count = 0.5
 
     elif phase == ProposalPhase.EARLY:
         limit_date = 7
-        procurement_token_amount = 100  # 1,000千円
+        procurement_token_amount = 1000  # 1,000千円
         min_voter_count = 100
         min_agreement_count = 0.5
     elif phase == ProposalPhase.MIDDLE:
         limit_date = 14
-        procurement_token_amount = 500  # 5,000千円
+        procurement_token_amount = 5000  # 5,000千円
         min_voter_count = 200
         min_agreement_count = 0.6
     elif phase == ProposalPhase.LATER:
         limit_date = 21
-        procurement_token_amount = 1000  # 10,000千円
+        procurement_token_amount = 10000  # 10,000千円
         min_voter_count = 300
         min_agreement_count = 0.7
     elif phase == ProposalPhase.GROWTH:
         limit_date = 21
-        procurement_token_amount = 5000  # 50,000千円
+        procurement_token_amount = 50000  # 50,000千円
         min_voter_count = 500
         min_agreement_count = 0.8
 
