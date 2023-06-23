@@ -4,7 +4,7 @@
 
 イノサポのサービスには下記の URL からアクセスしてください
 
-- [イノサポ - InnovationSupport](https://innovation-support-d391e.web.app)
+- ~[イノサポ - InnovationSupport](https://innovation-support-d391e.web.app)~ 公開は終了しました
 
 <div align="center">
   <img src="./docs/app.png" height="500">
@@ -69,14 +69,14 @@ BATCH_INTERVAL_MINUTE=1
 BLOCK_EXPLORER_URL=https://goerli.etherscan.io/
 ```
 
-その後、下記のコマンドを実行し必要ライブラリのインストールと単体テストを行う。
+その後下記のコマンドを実行し、必要ライブラリのインストールと単体テストを行う。
 
 ```sh:
 poetry install
 poetry run pytest .
 ```
 
-プログラムを実行する。
+APIサーバーを起動する。
 
 ```sh:
 poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
@@ -84,7 +84,7 @@ poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 実行後下記の URL に SwaggerDoc が表示される
 
-- http://localhost:8000
+- http://localhost:8000/docs
 
 
 ## その他スクリプト
@@ -99,7 +99,9 @@ docker-compose up -d
 
 ### テストユーザを作成し投票
 
-テスト用に、指定した提案に対してサンプルユーザによる投票処理と、投票期間の終了処理を行う。
+動作確認やデモ用に、指定した提案に対して、下記の処理を行う。
+- サンプルユーザによる投票処理
+- 指定した提案の投票期間の終了
 
 ```sh:
 poetry run python scripts/sample_vote.py -h
@@ -116,7 +118,7 @@ options:
                         賛成の割合
 ```
 
-`test_proposal_id`に賛成比率を 7 割で 200 票投票する場合は、下記のコマンドを実行する。
+例えば、`test_proposal_id`に賛成比率を 7 割で 200 票投票する場合は、下記のコマンドを実行する。
 
 ```sh:
 poetry run python scripts/sample_vote.py --proposal_id=test_proposal_id --voter_count=200 --agreement_rate=0.7
