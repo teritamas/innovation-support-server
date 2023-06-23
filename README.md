@@ -36,6 +36,7 @@ API の種類や仕様に関しては下記の URL を参照してください
 ```sh:.env.sample
 # google cloudのサービスアカウントのキー
 CRED_PATH=
+
 # 提案NFTのコントラクトアドレス
 PROPOSAL_NFT_CONTRACT_ADDRESS=
 # トークンNFTのコントラクトアドレス
@@ -48,7 +49,7 @@ SYSTEM_WALLET_PRIVATE_KEY_PATH=./key/wallet/dev_private.key
 # 上記のコントラクトをデプロイしたネットワーク名
 PROVIDE_NETWORK=https://goerli.blockpi.network/v1/rpc/public
 
-# Google Cloud Storageに提案すクリップとを保存する際のルートパス
+# Google Cloud Storageに提案のPDFとサムネイルを保存する場合のルートパス
 GOOGLE_CLOUD_STORAGE_BUCKET_NAME=proposal-for-innovation-support
 
 # フロントエンドのURL
@@ -64,6 +65,7 @@ COTOHA_CLIENT_SECRET=
 # バッチ処理の実行間隔
 BATCH_INTERVAL_MINUTE=1
 
+# デプロイしたコントラクトのブロックエクスプローラーのURL
 BLOCK_EXPLORER_URL=https://goerli.etherscan.io/
 ```
 
